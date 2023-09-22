@@ -1,0 +1,18 @@
+@layout('layouts/sampleLayout')
+@set('title', 'Home page')
+
+@section('body')
+  <section class="hero is-warning">
+    <div class="hero-body">
+      <p class="title">
+        Title
+      </p>
+      <p class="subtitle">
+        Subtitle
+        @each(user in users)
+        {{user.firstName}}
+        @end
+      </p>
+    </div>
+  </section>
+@end

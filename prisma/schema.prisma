@@ -1,0 +1,186 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" //postgressql
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id              Int                    @id @default(autoincrement())
+  firstName       String
+  lastName        String
+  email           String                 @unique
+  phone           String?
+  desc            String?
+  password        String
+  rememberMeToken String?
+  isActive        Boolean                @default(false)
+  role            Role?                  @relation(fields: [roleId], references: [id], onDelete: SetNull)
+  roleId          Int?
+  avatar          Image?                 @relation(fields: [avatarId], references: [id])
+  avatarId        Int?
+  createdAt       DateTime?              @default(now())
+  updatedAt       DateTime?              @updatedAt
+  lastSeen        DateTime?
+  address         Address?
+  Message         SupportTicketMessage[]
+  Social          Social?
+}
+
+model Address {
+  id          Int        @id @default(autoincrement())
+  address     String?
+  city        City?      @relation(fields: [cityId], references: [id])
+  cityId      Int?
+  state       State?     @relation(fields: [stateId], references: [id])
+  stateId     Int?
+  country     Country?   @relation(fields: [countryId], references: [id])
+  countryId   Int?
+  zip         String?
+  adminUser   AdminUser? @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  adminUserId Int?       @unique
+}
+
+model Country {
+  id       Int       @id @default(autoincrement())
+  name     String
+  isActive Boolean   @default(false)
+  State    State[]
+  Address  Address[]
+}
+
+model State {
+  id        Int       @id @default(autoincrement())
+  name      String
+  country   Country?  @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  countryId Int?
+  isActive  Boolean   @default(false)
+  City      City[]
+  Address   Address[]
+}
+
+model City {
+  id       Int       @id @default(autoincrement())
+  name     String
+  state    State?    @relation(fields: [stateId], references: [id], onDelete: SetNull)
+  stateId  Int?
+  isActive Boolean   @default(false)
+  Address  Address[]
+}
+
+model Social {
+  id          Int        @id @default(autoincrement())
+  website     String?
+  facebook    String?
+  twitter     String?
+  instagrame  String?
+  pintrest    String?
+  vk          String?
+  whatsapp    String?
+  adminUser   AdminUser? @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  adminUserId Int        @unique
+}
+
+model Role {
+  id          Int          @id @default(autoincrement())
+  name        String
+  permissions permission[]
+  AdminUser   AdminUser[]
+}
+
+model permission {
+  id   Int    @id @default(autoincrement())
+  name String
+  Role Role[]
+}
+
+model User {
+  id              Int                    @id @default(autoincrement())
+  userName        Int
+  email           String
+  firstName       String?
+  lastName        String?
+  isEmailVarified Boolean                @default(false)
+  password        String?
+  isPasswordSet   Boolean
+  iaActive        Boolean                @default(false)
+  avatar          Image?                 @relation(fields: [avatarId], references: [id])
+  avatarId        Int?                   @unique
+  SupportTicket   SupportTicket[]
+  Message         SupportTicketMessage[]
+}
+
+model Image {
+  id        Int         @id @default(autoincrement())
+  url_sm    String
+  url       String
+  AdminUser AdminUser[]
+  User      User[]
+}
+
+model HelpCenterContent {
+  id                   Int                 @id @default(autoincrement())
+  title                String
+  slug                 String              @unique
+  content              String?
+  metaTitle            String?
+  metaKeywords         String?
+  metaDesc             String?
+  category             HelpCenterCategory? @relation(fields: [helpCenterCategoryId], references: [id], onDelete: SetNull)
+  helpCenterCategoryId Int?
+  language             Language            @relation(fields: [languageId], references: [id])
+  languageId           Int
+  createdAt            DateTime?           @default(now())
+  updatedAt            DateTime?           @updatedAt
+}
+
+model HelpCenterCategory {
+  id                Int                 @id @default(autoincrement())
+  name              String
+  slug              String              @unique
+  metaTitle         String?
+  metaKeywords      String?
+  metaDesc          String?
+  language          Language?           @relation(fields: [languageId], references: [id], onDelete: SetNull)
+  languageId        Int?
+  HelpCenterContent HelpCenterContent[]
+}
+
+model Language {
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  HelpCenterContent  HelpCenterContent[]
+  HelpCenterCategory HelpCenterCategory[]
+}
+
+model SupportTicket {
+  id          Int                    @id @default(autoincrement())
+  subject     String
+  description String
+  user        User?                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int?
+  status      String                 @default("Open")
+  createdAt   DateTime?              @default(now())
+  updatedAt   DateTime?              @updatedAt
+  Message     SupportTicketMessage[]
+
+  @@index([status])
+}
+
+model SupportTicketMessage {
+  id              Int           @id @default(autoincrement())
+  message         String
+  createdAt       DateTime?     @default(now())
+  updatedAt       DateTime?     @updatedAt
+  user            User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  adminuser       AdminUser?    @relation(fields: [adminUserId], references: [id], onDelete: SetNull)
+  supportTicket   SupportTicket @relation(fields: [supportTicketId], references: [id], onDelete: Cascade)
+  userId          Int?
+  adminUserId     Int?
+  supportTicketId Int
+}
