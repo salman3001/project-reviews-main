@@ -5,8 +5,8 @@
  * file.
  */
 
-import { PrismaAuthProviderConfig } from '@ioc:Adonis/Addons/Prisma'
-import { AdminUser } from '@prisma/client'
+import { PrismaAuthProviderConfig, PrismaAuthProviderContract } from '@ioc:Adonis/Addons/Prisma'
+import { AdminUser, User } from '@prisma/client'
 
 declare module '@ioc:Adonis/Addons/Auth' {
   /*
@@ -35,8 +35,12 @@ declare module '@ioc:Adonis/Addons/Auth' {
     |
     */
     adminUser: {
-      implementation: DatabaseProviderContract<AdminUser>
+      implementation: PrismaAuthProviderContract<AdminUser>
       config: PrismaAuthProviderConfig<AdminUser>
+    }
+    user: {
+      implementation: PrismaAuthProviderContract<User>
+      config: PrismaAuthProviderConfig<User>
     }
   }
 
@@ -65,10 +69,15 @@ declare module '@ioc:Adonis/Addons/Auth' {
     | the `user` provider for fetching user details.
     |
     */
-    web: {
-      implementation: SessionGuardContract<'adminUser', 'web'>
+    adminUserGuard: {
+      implementation: SessionGuardContract<'adminUser', 'adminUserGuard'>
       config: SessionGuardConfig<'adminUser'>
       client: SessionClientContract<'adminUser'>
+    }
+    userGuard: {
+      implementation: SessionGuardContract<'user', 'userGuard'>
+      config: SessionGuardConfig<'user'>
+      client: SessionClientContract<'user'>
     }
   }
 }

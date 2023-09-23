@@ -1,5 +1,5 @@
 import { prisma, PrismaSeederBase } from '@ioc:Adonis/Addons/Prisma'
-import * as bcrypt from 'bcrypt'
+import Hash from '@ioc:Adonis/Core/Hash'
 
 const adminusers = [
   {
@@ -7,7 +7,7 @@ const adminusers = [
     firstName: 'salman',
     lastName: 'khan',
     email: 'salman@gmail.com',
-    password: bcrypt.hashSync('123456789', 10),
+    password: Hash.make('123456789'),
     roleId: 1,
     isActive: true,
   },
@@ -27,7 +27,7 @@ export default class AdminUserSeeder extends PrismaSeederBase {
           email: adminuser.email,
           firstName: adminuser.firstName,
           lastName: adminuser.lastName,
-          password: adminuser.password,
+          password: await adminuser.password,
           roleId: adminuser.roleId,
           isActive: true,
         },
@@ -36,7 +36,7 @@ export default class AdminUserSeeder extends PrismaSeederBase {
           email: adminuser.email,
           firstName: adminuser.firstName,
           lastName: adminuser.lastName,
-          password: adminuser.password,
+          password: await adminuser.password,
           roleId: adminuser.roleId,
           isActive: true,
         },

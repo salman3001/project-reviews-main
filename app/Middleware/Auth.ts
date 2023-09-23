@@ -13,7 +13,8 @@ export default class AuthMiddleware {
   /**
    * The URL to redirect to when request is Unauthorized
    */
-  protected redirectTo = '/login'
+  protected redirectToAdminLogin = '/admin/login'
+  protected redirectToUserLogin = '/login'
 
   /**
    * Authenticates the current HTTP request against a custom set of defined
@@ -30,6 +31,7 @@ export default class AuthMiddleware {
      * it can decide the correct response behavior based upon the guard
      * driver
      */
+
     let guardLastAttempted: string | undefined
 
     for (let guard of guards) {
@@ -49,18 +51,29 @@ export default class AuthMiddleware {
     /**
      * Unable to authenticate using any guard
      */
-    throw new AuthenticationException(
-      'Unauthorized access',
-      'E_UNAUTHORIZED_ACCESS',
-      guardLastAttempted,
-      this.redirectTo,
-    )
+    if (guardLastAttempted === 'adminUserGuard') {
+      throw new AuthenticationException(
+        'Unauthorized access',
+        'E_UNAUTHORIZED_ACCESS',
+        guardLastAttempted,
+        this.redirectToAdminLogin
+      )
+    }
+
+    if (guardLastAttempted === 'userGuard') {
+      throw new AuthenticationException(
+        'Unauthorized access',
+        'E_UNAUTHORIZED_ACCESS',
+        guardLastAttempted,
+        this.redirectToUserLogin
+      )
+    }
   }
 
   /**
    * Handle request
    */
-  public async handle (
+  public async handle(
     { auth }: HttpContextContract,
     next: () => Promise<void>,
     customGuards: (keyof GuardsList)[]

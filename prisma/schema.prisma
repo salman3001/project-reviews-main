@@ -102,13 +102,14 @@ model permission {
 model User {
   id              Int                    @id @default(autoincrement())
   userName        Int
-  email           String
+  email           String                 @unique
   firstName       String?
   lastName        String?
   isEmailVarified Boolean                @default(false)
   password        String?
   isPasswordSet   Boolean
   iaActive        Boolean                @default(false)
+  rememberMeToken String?
   avatar          Image?                 @relation(fields: [avatarId], references: [id])
   avatarId        Int?                   @unique
   SupportTicket   SupportTicket[]

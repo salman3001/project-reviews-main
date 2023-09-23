@@ -20,10 +20,8 @@ import { prisma } from '@ioc:Adonis/Addons/Prisma'
 */
 
 import Route from '@ioc:Adonis/Core/Route'
+import '../routes/adminRoutes'
 
 Route.get('/', async ({ view }) => {
-  const users = await prisma.adminUser.findMany()
-  return view.render('admin/home', {
-    users,
-  })
-})
+  return view.render('front/home')
+}).as('home')

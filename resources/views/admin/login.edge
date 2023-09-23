@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Login</title>
+</head>
+<body>
+  login
+  {{inspect(flashMessages.all())}}
+  <form action="{{route('admin.login.post')}}" method="post">
+  {{ csrfField() }}
+  <input type="text" name="email" required>
+  <input type="text" name="password"required>
+  <input type="checkbox" name="rememberMe" value="1">
+  <button>Submit</button>
+  </form>
+</body>
+</html>

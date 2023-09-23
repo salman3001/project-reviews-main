@@ -5,13 +5,12 @@
   <section class="hero is-warning">
     <div class="hero-body">
       <p class="title">
-        Title
+        Dashboard
       </p>
       <p class="subtitle">
-        Subtitle
-        @each(user in users)
-        {{user.firstName}}
-        @end
+        @if(auth.user)
+        {{auth.user}}
+        @endif
       </p>
     </div>
   </section>

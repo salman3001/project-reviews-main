@@ -17,7 +17,7 @@ import type { AuthConfig } from '@ioc:Adonis/Addons/Auth'
 |
 */
 const authConfig: AuthConfig = {
-  guard: 'web',
+  guard: 'adminUserGuard',
   guards: {
     /*
     |--------------------------------------------------------------------------
@@ -29,7 +29,7 @@ const authConfig: AuthConfig = {
     | use web guard with session driver
     |
     */
-    web: {
+    adminUserGuard: {
       driver: 'session',
 
       provider: {
@@ -75,7 +75,57 @@ const authConfig: AuthConfig = {
         | field and `remember_me_token` column.
         |
         */
-        model: 'adminuser',
+        //@ts-ignore
+        model: 'adminUser',
+      },
+    },
+    userGuard: {
+      driver: 'session',
+
+      provider: {
+        /*
+        |--------------------------------------------------------------------------
+        | Driver
+        |--------------------------------------------------------------------------
+        |
+        | Name of the driver
+        |
+        */
+        driver: 'prisma',
+
+        /*
+        |--------------------------------------------------------------------------
+        | Identifier key
+        |--------------------------------------------------------------------------
+        |
+        | The identifier key is the unique key inside the defined database table.
+        | In most cases specifying the primary key is the right choice.
+        |
+        */
+        identifierKey: 'id',
+
+        /*
+        |--------------------------------------------------------------------------
+        | Uids
+        |--------------------------------------------------------------------------
+        |
+        | Uids are used to search a user against one of the mentioned columns. During
+        | login, the auth module will search the user mentioned value against one
+        | of the mentioned columns to find their user record.
+        |
+        */
+        uids: ['email'],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Database table
+        |--------------------------------------------------------------------------
+        |
+        | The database table to query. Make sure the database table has a `password`
+        | field and `remember_me_token` column.
+        |
+        */
+        model: 'user',
       },
     },
   },
