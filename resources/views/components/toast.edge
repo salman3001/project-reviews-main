@@ -1,0 +1,22 @@
+<div class="toast toast-top toast-center">
+  <div id="toast" class="alert {{type}} min-w-[20rem]">
+    <div class="flex items-start justify-start h-full">
+      @if(type==="alert-error")~
+      <svg xmlns="http://www.w3.org/2000/svg" fill="#C58422" viewBox="0 0 24 24" stroke-width="1.5" stroke="white"
+        class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+      </svg>
+      @endif
+    </div>
+    <div class="flex flex-col">
+      <h6 class="font-bold">{{title}}</h6>
+      <p>{{message ? message:""}}</p>
+    </div>
+  </div>
+  <script>
+    document.getElementById('toast').addEventListener('click',()=>{
+      console.log(this);
+    })
+  </script>
+</div>

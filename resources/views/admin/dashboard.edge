@@ -2,16 +2,16 @@
 @set('title', 'Home page')
 
 @section('body')
-  <section class="hero is-warning">
-    <div class="hero-body">
-      <p class="title">
-        Dashboard
-      </p>
-      <p class="subtitle">
-        @if(auth.user)
-        {{auth.user}}
-        @endif
-      </p>
-    </div>
-  </section>
+<section class="hero is-warning">
+  <div class="hero-body">
+    <p class="title">
+      Dashboard
+    </p>
+    <p class="subtitle">
+      @if(auth.user)
+      {{auth.user}}
+      @endif
+    </p>
+  </div>
+</section>
 @end
