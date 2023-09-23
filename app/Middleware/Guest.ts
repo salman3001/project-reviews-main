@@ -7,8 +7,6 @@ export default class Guest {
     next: () => Promise<void>,
     guardName: (keyof GuardsList)[]
   ) {
-    console.log(auth.use(guardName[0]).isLoggedIn)
-
     // code for middleware goes here. ABOVE THE NEXT CALL
     if (await auth.use(guardName[0]).check()) {
       if (guardName[0] === 'adminUserGuard') {
