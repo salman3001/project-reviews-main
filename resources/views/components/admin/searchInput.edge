@@ -1,0 +1,7 @@
+<form id="search-from" class="relative" action="{{route}}">
+  <input class="input bg-base-200 input-sm input-bordered" type="text" name="search" id="search" onkeypress="(e)=>{
+    if(e.keycode==13){
+      this.form.submit()
+    }
+  }">
+</form>

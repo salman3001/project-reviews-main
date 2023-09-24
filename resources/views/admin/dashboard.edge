@@ -1,15 +1,15 @@
-@layout('layouts/sampleLayout')
+@layout('layouts/adminLayout')
 @set('title', 'Home page')
 
 @section('body')
 <section class="hero is-warning">
   <div class="hero-body">
-    <p class="title">
+    <p class="title m-20">
       Dashboard
     </p>
     <p class="subtitle">
       @if(auth.user)
-      {{auth.user}}
+      <span>Hello {{auth.user.firstName}} ! Welcome to dashboard</span>
       @endif
     </p>
   </div>

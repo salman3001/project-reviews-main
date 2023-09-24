@@ -12,6 +12,10 @@ Route.group(() => {
     }).as('admin.dashboard')
 
     Route.get('logout', 'AuthController.adminLogout').as('admin.logout')
+
+    Route.resource('admin-users', 'AdminUsersController')
+    Route.resource('roles', 'RolesController')
+    Route.get('permissions', 'PermissiosnController.index').as('permissions.index')
   }).middleware('auth:adminUserGuard')
 
   //guest routes

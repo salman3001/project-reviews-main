@@ -19,29 +19,32 @@
         @!component('components/brand')
         <p class="text-center text-xl font-bold">Welcome Back</p>
         <p class="text-center  ">Enter you email and password to sign in </p>
-        @if(flashMessages.has('message'))
-        @!component('components/toast',{
-        type:"alert-error",
-        title:flashMessages.get('message')
-        })
-        @endif
       </div>
-      <form class="space-y-4" action="{{ route('admin.login') }}" method="post">
+      @if(flashMessages.has('message'))
+      <p class="my-2 text-red-500">{{flashMessages.get('message')}}</p>
+      @endif
+      <form class="space-y-4" action="{{ route('admin.login.post') }}" method="post">
         {{ csrfField() }}
         <div>
           <label class="label">
             <span class="text-base label-text">Email</span>
           </label>
           <input type="text" placeholder="Email Address" class="w-full input input-bordered"
-            value="{{flashMessages.get('email') || ''}}" />
+            value="{{flashMessages.get('email') || ''}}" name="email" />
         </div>
         <div>
           <label class="label">
             <span class="text-base label-text">Password</span>
           </label>
-          <input type="password" placeholder="Enter Password" class="w-full input input-bordered" />
+          <input type="password" placeholder="Enter Password" class="w-full input input-bordered" name='password' />
         </div>
-        <div class="flex justify-end">
+        <div class="flex justify-between">
+          <div class="form-control">
+            <label class="label cursor-pointer gap-2">
+              <input type="checkbox" class="toggle toggle-xs" name="rememberMe" />
+              <span class="label-text">Remember me</span>
+            </label>
+          </div>
           <a href="" class="btn btn-link text-black no-underline normal-case  btn-sm ">Forget Password?</a>
         </div>
         <div>

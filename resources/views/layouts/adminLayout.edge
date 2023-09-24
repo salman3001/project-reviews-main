@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}</title>
+  @entryPointStyles('app')
+  @entryPointScripts('app')
+</head>
+
+<body>
+  <nav class=" flex justify-between items-center px-6 sm:px-10 h-16 border-b">
+    <div>
+      @!component('components/brand')
+    </div>
+    <div class="flex gap-6 items-center">
+      @!component('components/admin/notificationMenu')
+      @!component('components/admin/profileMenu')
+    </div>
+  </nav>
+  <nav class=" flex items-center px-6 sm:px-10 h-10 border-b">
+    <div class="dropdown  dropdown-bottom">
+      <label tabindex="0"
+        class="btn btn-ghost  text-black btn-sm  m-1 {{request.request.url.startsWith('/admin/admin-users') || request.request.url.startsWith('/admin/roles') ? 'text-black font-bold' : 'text-gray-400' }}">
+        Admin user
+      </label>
+      <ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-48 border-t-4 border-black">
+        <li><a href="{{ route('admin_users.index') }}" class="text-sm">Users</a></li>
+        <li><a href="{{ route('roles.index') }}" class="text-sm">Roles & Permissions</a></li>
+      </ul>
+    </div>
+    <div class="dropdown  dropdown-bottom ">
+      <label tabindex="0"
+        class="btn btn-ghost text-black btn-sm  m-1 {{request.request.url.startsWith('/admin/helpcenter')? 'text-black font-bold' : 'text-gray-400' }}">
+        Help Center
+      </label>
+      <ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-48 border-t-4 border-black">
+        <li>
+          <a href="#" class="text-sm">
+            knowledge Base
+          </a>
+        </li>
+        <li>
+          <a href="#" class="text-sm">
+            Content
+          </a>
+        </li>
+        <li>
+          <a href="#" class="text-sm">
+            Categories
+          </a>
+        </li>
+        <li><a href="#" class="text-sm">Support Tickets</a></li>
+        <li><a href="#" class="text-sm">Contact Messages</a></li>
+      </ul>
+    </div>
+    <div class="dropdown  dropdown-bottom ">
+      <label tabindex="0"
+        class="btn btn-ghost text-black btn-sm  m-1  {{request.request.url.startsWith('/admin/helpcenter')? 'text-black font-bold' : 'text-gray-400' }}">
+        Blogs
+      </label>
+      <ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-32 border-t-4 border-black">
+        <li>
+          <a href="#" class="text-sm">
+            Blog Posts
+          </a>
+        </li>
+        <li>
+          <a href="#" class="text-sm">
+            Categories
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="px-6 sm:px-10">
+    @!section('body')
+  </div>
+
+  <footer class="footer">
+  </footer>
+</body>
+
+</html>
