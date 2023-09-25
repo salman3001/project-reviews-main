@@ -85,6 +85,6 @@
     "toastify-js": "^1.12.0"
   },
   "prisma": {
-    "seed": "node --loader ts-node/esm prisma/seed.ts"
+    "seed": "node ace prisma-seeder:run"
   }
 }

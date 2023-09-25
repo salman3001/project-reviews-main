@@ -83,6 +83,11 @@
 
   <footer class="footer">
   </footer>
+  @if(flashMessages.has('message'))
+  <div data-type="{{flashMessages.get('message.type')}}" id="message" class="hidden">
+    {{flashMessages.get('message.title')}}
+  </div>
+  @end
 </body>
 
 </html>

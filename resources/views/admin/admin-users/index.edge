@@ -36,7 +36,7 @@
       </a>
     </div>
   </div>
-  <div class="overflow-x-scroll">
+  <div class="overflow-x-scroll overflow-y-visible pb-16 mt-8">
     <table class="table table-zebra mt-6 ">
       <thead>
         <tr>
@@ -73,10 +73,21 @@
             <div class="badge badge-error badge-outline bg-base-200">InActive</div>
             @end
           </td>
-          <td>Actions</td>
+          <td>
+            <div class="dropdown  dropdown-bottom">
+              <label tabindex="0" class="btn btn-primary  font-normal text-white btn-sm normal-case w-max gap-1">
+                Select an Options
+              </label>
+              <ul class="p-1 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-32 border-t-4 border-black">
+                <li><a href="" class="text-sm p-1">Change Role</a></li>
+                <li><a href="" class="text-sm p-1">Ban User</a></li>
+                <li><a href="{{ route('admin_users.edit',{id:user.id})}}" class="text-sm p-1">Edit User</a></li>
+                <li><a href="" class="text-sm p-1">Delete User</a></li>
+              </ul>
+            </div>
+          </td>
         </tr>
         @endeach
-
         @endif
       </tbody>
 
@@ -86,12 +97,6 @@
     @!component('components/pagination',{
     pagination
     })
-
   </div>
-  @if(flashMessages.has('message'))
-  <div data-type="error" id="message" class="hidden">
-    {{flashMessages.get('message')}}
-  </div>
-  @end
 </section>
 @end

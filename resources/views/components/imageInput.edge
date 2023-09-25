@@ -2,7 +2,8 @@
   <div
     class="w-52 h-52 bg-base-200 rounded-lg overflow-hidden flex flex-col justify-center items-center border border-base-300">
     <label for="imageInput" class="cursor-pointer">
-      <img id="previewImage" alt="Preview" style="max-width: 200px; max-height: 200px;" src="/images/preview-image.png">
+      <img id="previewImage" alt="Preview" style="max-width: 200px; max-height: 200px;" src={{ url
+        ?? "/images/preview-image.png" }}>
     </label>
     <input type="file" id="imageInput" name="image" class="hidden" accept=".jpg,.jpeg,.png,.webp">
     <p class="pt-2 text-base-400">Upload Image</p>

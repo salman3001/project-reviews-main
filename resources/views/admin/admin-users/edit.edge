@@ -14,16 +14,18 @@
       </svg>
     </a>
     <div class="flex flex-col items-center">
-      <h1 class="text-2xl font-bold">Add User</h1>
+      <h1 class="text-2xl font-bold">Edit User</h1>
       <p class="text-base-400 text-sm">Add user details</p>
     </div>
   </div>
-  <form action="{{ route('admin_users.store')}}" method="post" class="mt-4" enctype="multipart/form-data">
+  <form action="/admin/admin-users/1?_method=PATCH" method="post" class="mt-4" enctype="multipart/form-data">
     {{ csrfField() }}
     <div class="space-y-4">
       <p class="text-xl font-semibold">General Information</p>
       <div class="flex flex-col  sm:flex-row gap-4">
-        @!component('components/imageInput')
+        @!component('components/imageInput',{
+        url:user?.avatar?.url
+        })
         <div class="w-full flex flex-wrap gap-4">
           <div class="form-control w-full max-w-xs">
             <label class="">
@@ -31,24 +33,24 @@
             </label>
             <input type="text" placeholder="Type here"
               class="input input-bordered w-full max-w-md {{fl?.errors?.email && " input-error" }}" name="email"
-              value="{{fl?.email??"" }}" />
+              value="{{user.email ?? "" }}" disabled />
             <span class="text-red-500">{{fl?.errors?.email ?? "" }}</span>
           </div>
-          <div class="form-control w-full max-w-xs">
+          {{-- <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Password</span>
             </label>
             <input type="password" placeholder="Type here"
               class="input input-bordered w-full max-w-md {{fl?.errors?.password && " input-error"}}" name="password" />
             <span class="text-red-500">{{fl?.errors?.password ?? "" }}</span>
-          </div>
+          </div> --}}
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">First name</span>
             </label>
             <input type="text" placeholder="Type here"
               class="input input-bordered w-full  max-w-md {{fl?.errors?.firstName && " input-error"}}" name="firstName"
-              value="{{fl?.firstName ??""  }}" />
+              value="{{user.firstName ?? "" }}" />
             <span class="text-red-500">{{fl?.errors?.firstName ??"" }}</span>
           </div>
           <div class="form-control w-full max-w-xs">
@@ -57,7 +59,7 @@
             </label>
             <input type="text" placeholder="Type here"
               class="input input-bordered w-full  max-w-md {{fl?.errors?.lastName && " input-error"}}" name="lastName"
-              value="{{fl?.lastName ?? "" }}" />
+              value="{{user.lastName ?? ""  }}" />
             <span class=" text-red-500">{{fl?.errors?.lastName ??"" }}</span>
           </div>
           <div class="form-control w-full max-w-xs">
@@ -66,7 +68,7 @@
             </label>
             <input type="number" placeholder="Type here"
               class="input input-bordered w-full  max-w-md {{fl?.errors?.phone && " input-error"}}" name="phone"
-              value="{{fl?.phone??"" }}" />
+              value="{{user.phone ?? "" }}" />
             <span class="text-red-500">{{fl?.errors?.phone ?? "" }}</span>
           </div>
 
@@ -79,8 +81,8 @@
         <div class="w-full flex flex-wrap gap-4">
           <div class="form-control">
             <label class="label cursor-pointer gap-2">
-              <input type="checkbox" class="toggle" name="isActive" value="true" {{fl?.isActive && fl.isActive==="true"
-                && "checked" }} />
+              <input type="checkbox" class="toggle" name="isActive" value="true" {{user.isActive===true && "checked"
+                }} />
               <span class="label-text ">Activate</span>
             </label>
           </div>
@@ -92,7 +94,7 @@
           <select class="select select-bordered " name="roleId">
             <option disabled selected>Role</option>
             @each(role in roles)
-            <option value="{{role.id}}" {{fl?.roleId && fl?.roleId==role.id && "selected" }}>{{role.name}}
+            <option value="{{role.id}}" {{user?.roleId==role.id && "selected" }}>{{role.name}}
             </option>
             @endeach
           </select>
@@ -110,7 +112,7 @@
             </label>
             <input type="text" placeholder="Type here"
               class="input input-bordered w-full max-w-2xl {{fl?.errors?.address?.address && 'input-error'}}"
-              name="address[address]" value="{{fl?.address?.address ?? "" }}" />
+              name="address[address]" value="{{user?.address?.address ?? ""}}" />
             <span class="text-red-500">{{fl?.errors?.address?.address ??"" }}</span>
           </div>
           <div class="form-control w-full max-w-2xl">
@@ -120,7 +122,8 @@
             <select class="select select-bordered " name="cityId">
               <option disabled selected>Select City</option>
               @each(city in cities)
-              <option value="{{city.id}}" {{fl?.cityId && fl?.cityId==city.id && "selected" }}>{{city.name}}
+              <option value="{{user?.address?.city && user?.address?.city.id==city.id && " selected" }}">
+                {{city.name}}
               </option>
               @endeach
             </select>
@@ -132,7 +135,8 @@
             <select class="select select-bordered " name="stateId">
               <option disabled selected>Select State</option>
               @each(state in States)
-              <option value="{{state.id}}" {{fl?.stateId && fl?.stateId==state.id && "selected" }}>{{state.name}}
+              <option value="{{user?.address?.state && user?.address?.state.id==state.id && " selected" }}">
+                {{state.name}}
               </option>
               @endeach
             </select>
@@ -144,7 +148,7 @@
             <select class="select select-bordered " name="countryId">
               <option disabled selected>Select Country</option>
               @each(country in countries)
-              <option value="{{country.id}}" {{fl?.countryId && fl?.countryId==country.id && "selected" }}>
+              <option value="{{user?.address?.country && user?.address?.country.id==country.id && " selected" }}">
                 {{country.name}}
               </option>
               @endeach
@@ -156,7 +160,7 @@
             </label>
             <input type="text" placeholder="Type here"
               class="input input-bordered w-full  max-w-md {{fl?.errors?.address?.zip && 'input-error'}}"
-              name="address[zip]" />
+              name="address[zip]" value="{{user?.address?.zip??""}}" />
             <span class="text-red-500">{{fl?.errors?.address?.zip ?? "" }}</span>
           </div>
         </div>
@@ -171,56 +175,56 @@
               <span class="label-text">Personal Website</span>
             </label>
             <input type="text" placeholder="Type here" class="input input-bordered w-full max-w-md "
-              name="social[website]" value="{{ fl?.social?.website ?? "" }}" />
+              name="social[website]" value="{{user?.Social?.website ?? ""}}" />
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Facebook Url</span>
             </label>
             <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
-              name="social[facebook]" value="{{fl?.social?.facebook ?? ""}}" />
+              name="social[facebook]" value="{{user?.Social?.facebook ?? ""}}" />
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Twitter Url</span>
             </label>
             <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
-              name="social[twitter]" value="{{fl?.social?.twitter ?? "" }}" />
+              name="social[twitter]" value="{{user?.Social?.twitter ?? ""}}" />
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Instagram Url</span>
             </label>
             <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
-              name="social[instagram]" value="{{fl?.social?.instagram??"" }}" />
+              name="social[instagram]" value="{{user?.Social?.instagram ?? ""}}" />
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Pintrest Url</span>
             </label>
             <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
-              name="social[pintrest]" value="{{fl?.social?.pintrest ?? "" }}" />
+              name="social[pintrest]" value="{{user?.Social?.pintrest ?? ""}}" />
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">VK Url</span>
             </label>
             <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md" name="social[vk]"
-              value="{{fl?.social?.vk??"" }}" />
+              value="{{user?.Social?.vk ?? ""}}" />
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Whatsapp Url</span>
             </label>
             <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
-              name="social[whatsapp]" value="{{fl?.social?.whatsapp??"" }}" />
+              name="social[whatsapp]" value="{{user?.Social?.whatsapp ?? ""}}" />
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Telegram Url</span>
             </label>
             <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
-              name="social[telegram]" value="{{fl?.social?.telegram??""}}" />
+              name="social[telegram]" value="{{user?.Social?.telegram ?? ""}}" />
           </div>
         </div>
       </div>
