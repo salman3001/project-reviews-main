@@ -1,0 +1,27 @@
+<div>
+  <div
+    class="w-52 h-52 bg-base-200 rounded-lg overflow-hidden flex flex-col justify-center items-center border border-base-300">
+    <label for="imageInput" class="cursor-pointer">
+      <img id="previewImage" alt="Preview" style="max-width: 200px; max-height: 200px;" src="/images/preview-image.png">
+    </label>
+    <input type="file" id="imageInput" name="image" class="hidden" accept=".jpg,.jpeg,.png,.webp">
+    <p class="pt-2 text-base-400">Upload Image</p>
+    <br>
+    <script>
+      const imageInput = document.getElementById('imageInput');
+    const previewImage = document.getElementById('previewImage');
+    function previewSelectedImage() {
+      const file = imageInput.files[0];
+      if (file && ['image/png','image/jpeg','image/jpg','image/webp'].includes(file.type)) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function(e) {
+          previewImage.src = e.target.result;
+        }
+      }
+    }
+    imageInput.addEventListener('change', previewSelectedImage);
+    </script>
+  </div>
+  <span class="text-red-500">{{flashMessages.get('errors.image',"" ) }}</span>
+</div>

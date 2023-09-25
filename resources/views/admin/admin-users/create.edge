@@ -1,0 +1,199 @@
+@layout('layouts/adminLayout')
+@set('title', 'Home page')
+
+
+@section('body')
+<section class="mt-8 mb-16">
+  <div class="flex items-center gap-4">
+    <a href="{{route('admin_users.index')}}">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+        class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+      </svg>
+    </a>
+    <div class="flex flex-col items-center">
+      <h1 class="text-2xl font-bold">Edit User</h1>
+      <p class="text-base-400 text-sm">Add user details</p>
+    </div>
+  </div>
+  <form action="{{ route('admin_users.store')}}" method="post" class="mt-4" enctype="multipart/form-data">
+    {{ csrfField() }}
+    <div class="space-y-4">
+      <p class="text-xl font-semibold">General Information</p>
+      <div class="flex flex-col  sm:flex-row gap-4">
+        @!component('components/imageInput')
+        <div class="w-full flex flex-wrap gap-4">
+          <div class="form-control w-full max-w-xs">
+            <label class="">
+              <span class="label-text">Email</span>
+            </label>
+            <input type="text" placeholder="Type here"
+              class="input input-bordered w-full max-w-md {{flashMessages.has('errors.email' ) && " input-error" }}"
+              name="email" value="{{flashMessages.get('email',"" ) }}" />
+            <span class="text-red-500">{{flashMessages.get('errors.email',"" ) }}</span>
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="">
+              <span class="label-text">Password</span>
+            </label>
+            <input type="password" placeholder="Type here"
+              class="input input-bordered w-full max-w-md {{flashMessages.has('errors.password') && " input-error"}}"
+              name="password" />
+            <span class="text-red-500">{{flashMessages.get('errors.password',"" ) }}</span>
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="">
+              <span class="label-text"> First name</span>
+            </label>
+            <input type="text" placeholder="Type here"
+              class="input input-bordered w-full  max-w-md {{flashMessages.has('errors.firstName') && " input-error"}}"
+              name="firstName" value="{{flashMessages.get('firstName',"" ) }}" />
+            <span class="text-red-500">{{flashMessages.get('errors.firstName',"" ) }}</span>
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="">
+              <span class="label-text">Last Name</span>
+            </label>
+            <input type="text" placeholder="Type here"
+              class="input input-bordered w-full  max-w-md {{flashMessages.has('errors.lastName') && " input-error"}}"
+              name="lastName" value="{{flashMessages.get('lastName',"" ) }}""
+              />
+            <span class=" text-red-500">{{flashMessages.get('errors.lastName',"" ) }}</span>
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="">
+              <span class="label-text">Phone</span>
+            </label>
+            <input type="number" placeholder="Type here"
+              class="input input-bordered w-full  max-w-md {{flashMessages.has('errors.phone') && " input-error"}}"
+              name="phone" value="{{flashMessages.get('phone',"" ) }}" />
+            <span class="text-red-500">{{flashMessages.get('errors.phone',"" ) }}</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="space-y-4 mt-8">
+      <p class="text-xl font-semibold">Location Information</p>
+      <div class="flex flex-col  sm:flex-row gap-4">
+        <div class="w-full flex flex-wrap gap-4">
+          <div class="form-control w-full max-w-2xl">
+            <label class="">
+              <span class="label-text">Adress</span>
+            </label>
+            <input type="text" placeholder="Type here"
+              class="input input-bordered w-full max-w-2xl {{flashMessages.has('errors.address.address') && 'input-error'}}"
+              name="address[address]" value="{{flashMessages.get('address.adress',"" ) }}" />
+            <span class="text-red-500">{{flashMessages.get('errors.address.address',"" ) }}</span>
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="">
+              <span class="label-text"> City</span>
+            </label>
+            <input type="text" placeholder="Type here"
+              class="input input-bordered w-full  max-w-md {{flashMessages.has('errors.address.city') && 'input-error'}}"
+              name="address[city]" />
+            <span class="text-red-500">{{flashMessages.get('errors.address.city',"" ) }}</span>
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="">
+              <span class="label-text">State</span>
+            </label>
+            <input type="text" placeholder="Type here"
+              class="input input-bordered w-full  max-w-md {{flashMessages.has('errors.address.state') && 'input-error'}}"
+              name="address[state]" />
+            <span class="text-red-500">{{flashMessages.get('errors.address.state',"" ) }}</span>
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="">
+              <span class="label-text">Country</span>
+            </label>
+            <input type="text" placeholder="Type here"
+              class="input input-bordered w-full  max-w-md {{flashMessages.has('errors.address.country') && 'input-error'}}"
+              name="address[country]" />
+            <span class="text-red-500">{{flashMessages.get('errors.address.country',"" ) }}</span>
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="">
+              <span class="label-text">Zipcode</span>
+            </label>
+            <input type="text" placeholder="Type here"
+              class="input input-bordered w-full  max-w-md {{flashMessages.has('errors.address.zip') && 'input-error'}}"
+              name="address[zip]" />
+            <span class="text-red-500">{{flashMessages.get('errors.address.zip',"" ) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="space-y-4 mt-8">
+      <p class="text-xl font-semibold">Url Information</p>
+      <div class="flex flex-col  sm:flex-row gap-4">
+        <div class="w-full flex flex-wrap gap-4">
+          <div class="form-control w-full max-w-xs ">
+            <label class="">
+              <span class="label-text">Personal Website</span>
+            </label>
+            <input type="text" placeholder="Type here" class="input input-bordered w-full max-w-md "
+              name="social[website]" value="{{flashMessages.get('social.website',"" ) }}" />
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="">
+              <span class="label-text">Facebook Url</span>
+            </label>
+            <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
+              name="social[facebook]" value="{{flashMessages.get('social.facebook',"" ) }}" />
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="">
+              <span class="label-text">Twitter Url</span>
+            </label>
+            <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
+              name="social[twitter]" value="{{flashMessages.get('social.twitter',"" ) }}" />
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="">
+              <span class="label-text">Instagram Url</span>
+            </label>
+            <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
+              name="social[instagram]" value="{{flashMessages.get('social.instagram',"" ) }}" />
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="">
+              <span class="label-text">Pintrest Url</span>
+            </label>
+            <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
+              name="social[pintrest]" value="{{flashMessages.get('social.pintrest',"" ) }}" />
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="">
+              <span class="label-text">VK Url</span>
+            </label>
+            <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md" name="social[vk]"
+              value="{{flashMessages.get('social.vk',"" ) }}" />
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="">
+              <span class="label-text">Whatsapp Url</span>
+            </label>
+            <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
+              name="social[whatsapp]" value="{{flashMessages.get('social.whatsapp',"" ) }}" />
+          </div>
+          <div class="form-control w-full max-w-xs">
+            <label class="">
+              <span class="label-text">Telegram Url</span>
+            </label>
+            <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
+              name="social[telegram]" value="{{flashMessages.get('social.telegram',"" ) }}" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-end mt-8 gap-8">
+      <a class="btn w-36 btn-sm text-base-400 bg-base-300 " href="{{ route('admin_users.index') }}">
+        Cancle
+      </a>
+      <button type="submit" class="btn w-36 btn-sm btn-primary">Save</button>
+    </div>
+  </form>
+</section>
+@end

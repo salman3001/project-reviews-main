@@ -1,5 +1,3 @@
-import Hash from '@ioc:Adonis/Core/Hash'
-import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class AuthController {

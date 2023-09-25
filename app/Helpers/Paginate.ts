@@ -6,7 +6,7 @@ export const paginate = (count: number, page: number, skip: number, routeName: s
 
   const currentPageUrl = Route.builder().qs({ page }).make(routeName)
 
-  const naxtPageUrl = Route.builder()
+  const nextPageUrl = Route.builder()
     .qs({ page: page < totalPages ? page + 1 : null })
     .make(routeName)
   const prevPageUrl = Route.builder()
@@ -30,7 +30,7 @@ export const paginate = (count: number, page: number, skip: number, routeName: s
   return {
     currentPage: page,
     currentPageUrl,
-    naxtPageUrl,
+    nextPageUrl,
     prevPageUrl,
     pages,
     count,

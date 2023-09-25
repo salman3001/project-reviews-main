@@ -78,10 +78,11 @@ model Social {
   website     String?
   facebook    String?
   twitter     String?
-  instagrame  String?
+  instagram   String?
   pintrest    String?
   vk          String?
   whatsapp    String?
+  telegram    String?
   adminUser   AdminUser? @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
   adminUserId Int        @unique
 }

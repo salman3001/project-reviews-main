@@ -39,7 +39,9 @@ declare module '@ioc:Adonis/Addons/Auth' {
       config: PrismaAuthProviderConfig<AdminUser>
     }
     user: {
+      // @ts-ignore
       implementation: PrismaAuthProviderContract<User>
+      // @ts-ignore
       config: PrismaAuthProviderConfig<User>
     }
   }

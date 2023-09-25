@@ -2,7 +2,11 @@
 module.exports = {
   content: ['./resources/**/*.{edge,js,ts,jsx,tsx,vue}'],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'base-400': '#686552',
+      },
+    },
   },
   plugins: [require('daisyui')],
   daisyui: {

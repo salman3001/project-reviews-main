@@ -7,4 +7,18 @@
   .btn {
     @apply text-white;
   }
+
+  .toastError {
+    background: none !important;
+    @apply !bg-red-100 !text-black !flex !gap-2 !text-sm !items-center  !min-w-[15rem] [&>img]:h-3 [&>img]:w-3 !shadow-sm !font-bold !rounded-lg border border-red-300;
+  }
+
+  .toastSuccess {
+    background: none !important;
+    @apply !bg-green-100 !text-black !flex !gap-2 !text-sm !items-center  !min-w-[15rem] [&>img]:h-3 [&>img]:w-3 !shadow-sm !font-bold !rounded-lg border border-green-300;
+  }
+  .toastWarning {
+    background: none !important;
+    @apply !bg-yellow-100 bg-opacity-40 !text-black !flex !gap-2 !text-sm !items-center  !min-w-[15rem] [&>img]:h-3 [&>img]:w-3 !shadow-sm !font-bold !rounded-lg border border-yellow-200;
+  }
 }

@@ -1,0 +1,97 @@
+@layout('layouts/adminLayout')
+@set('title', 'Home page')
+
+
+@section('body')
+<section>
+  <div class="flex flex-wrap gap-4 justify-between mt-8">
+    <div>
+      @!component('components/admin/searchInput',{
+      route:route('admin_users.index'),
+      value:query.search ?? ""
+      })
+    </div>
+
+    <div class="flex gap-4 flex-wrap">
+      <form id="role-form" action="{{ route('admin_users.index')}}">
+        <select class="select select-bordered select-sm" onchange="document.getElementById('role-form').submit()"
+          name="roleId">
+          <option disabled selected>Role</option>
+          @each(role in roles)
+          <option value="{{role.id}}" {{role.id==query.roleId && "selected" }}>{{role.name}}</option>
+          @endeach
+        </select>
+      </form>
+      <form id='isActive-form' action=" {{ route('admin_users.index')}}">
+
+        <select class="select select-bordered select-sm" onchange="document.getElementById('isActive-form').submit()"
+          name="isActive">
+          <option disabled selected>Status</option>
+          <option value="true" {{query.isActive=="true" && "selected" }}>Active</option>
+          <option value="false" {{query.isActive=="false" && "selected" }}>Inactive</option>
+        </select>
+      </form>
+      <a href="{{ route('admin_users.create') }}">
+        <button class="btn btn-primary btn-sm">+ Add User</button>
+      </a>
+    </div>
+  </div>
+  <div class="overflow-x-scroll">
+    <table class="table table-zebra mt-6 ">
+      <thead>
+        <tr>
+          <th>SNo.</th>
+          <th>Name</th>
+          <th>Role</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th>Actions</th>
+        <tr>
+      </thead>
+      <tbody>
+        @if(users)
+        @each((user,i) in users)
+        <tr>
+          <td>{{pagination.startCount+i }}</td>
+          <td class="flex items-center gap-2">
+            <div class="avatar">
+              <div class="w-6 rounded-full">
+                <img src="{{user.avatar ? user.avatar.url :'/images/dummy-profile.jpg'}}" />
+              </div>
+            </div>
+            {{user.firstName+" "+user.lastName}}
+          </td>
+          <td>{{user?.role ? user.role.name:""}}</td>
+          <td>{{user.phone}}</td>
+          <td>{{user.email}}</td>
+          <td>
+            @if(user.isActive)
+            <div class="badge badge-success badge-outline bg-base-200">Active</div>
+
+            @else
+            <div class="badge badge-error badge-outline bg-base-200">InActive</div>
+            @end
+          </td>
+          <td>Actions</td>
+        </tr>
+        @endeach
+
+        @endif
+      </tbody>
+
+    </table>
+  </div>
+  <div class="mt-4 flex justify-end">
+    @!component('components/pagination',{
+    pagination
+    })
+
+  </div>
+  @if(flashMessages.has('message'))
+  <div data-type="error" id="message" class="hidden">
+    {{flashMessages.get('message')}}
+  </div>
+  @end
+</section>
+@end
