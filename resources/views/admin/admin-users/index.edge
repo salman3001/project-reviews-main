@@ -54,8 +54,8 @@
         <tr>
           <td>{{pagination.startCount+i }}</td>
           <td class="flex items-center gap-2">
-            <div class="avatar">
-              <div class="w-6 rounded-full">
+            <div class="avatar ">
+              <div class="w-6 rounded-full ring-2 {{user.isActive ===true ?" ring-green-600":'ring-red-600' }}">
                 <img src="{{user.avatar ? await driveUrl(user.avatar.url) :'/images/dummy-profile.jpg'}}" />
               </div>
             </div>
@@ -69,7 +69,7 @@
             <div class="badge badge-success badge-outline bg-base-200">Active</div>
 
             @else
-            <div class="badge badge-error badge-outline bg-base-200">InActive</div>
+            <div class="badge badge-error badge-outline bg-base-200">Inactive</div>
             @end
           </td>
           <td>
@@ -104,5 +104,23 @@
     pagination
     })
   </div>
+  <label for="delete-user-modal" class="text-sm text-start p-1">Change Role</label>
+  <input type="checkbox" id="delete-user-modal" class="modal-toggle" checked />
+  <div class="modal">
+    <div class="modal-box">
+      <h3 class="text-lg font-bold">Hello!</h3>
+      <p class="py-4">This modal works with a hidden checkbox!</p>
+    </div>
+    <label class="modal-backdrop" for="delete-user-modal">Close</label>
+  </div>
 </section>
+<button onclick="togelDeleteModal()">ds</button>
+<script>
+  const togelDeleteModal =()=>{
+    const elem= document.getElementById('delete-user-modal')
+    if(elem){
+      elem.checked=elem.checked===true?false:true
+    }
+  }
+</script>
 @end
