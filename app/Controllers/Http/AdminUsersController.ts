@@ -148,10 +148,12 @@ export default class AdminUsersController {
     })
 
     if (payload.image) {
-      await payload.image.moveToDisk('./admin_users/')
+      await payload.image.moveToDisk('./admin_users/', {
+        name: user.firstName + Date.now() + '.' + payload.image.extname,
+      })
       const imageName = payload.image?.fileName
       const createdImage = await prisma.image.create({
-        data: { url: '/uploads/admin_users/' + imageName, url_sm: '' },
+        data: { url: '/admin_users/' + imageName, url_sm: '' },
       })
 
       await prisma.adminUser.update({
@@ -182,6 +184,8 @@ export default class AdminUsersController {
 
   public async update({ request, response, session, params }: HttpContextContract) {
     const id = Number(params.id)
+    console.log(id)
+
     const validationSchema = schema.create({
       image: schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'webp', 'gif'], size: '2mb' }),
       firstName: schema.string({ trim: true }),
@@ -219,31 +223,42 @@ export default class AdminUsersController {
         isActive: payload.isActive ? JSON.parse(payload.isActive) : false,
         roleId: Number(payload.roleId),
         address: {
-          create: { ...payload.address },
+          upsert: {
+            update: { ...payload.address },
+            create: { ...payload.address },
+          },
         },
-        Social: { create: { ...payload.social } },
+        Social: {
+          upsert: {
+            update: { ...payload.social },
+            create: { ...payload.social },
+          },
+        },
       },
       include: { avatar: true },
     })
 
     if (payload.image) {
+      if (user?.avatar) {
+        await Drive.delete(user.avatar.url)
+      }
+
       await payload.image.moveToDisk('./admin_users/', {
-        name: user.firstName + Date.now() + payload.image.extname,
+        name: user.firstName + Date.now() + '.' + payload.image.extname,
       })
       const imageName = payload.image?.fileName
-      const createdImage = await prisma.image.create({
-        data: { url: '/uploads/admin_users/' + imageName, url_sm: '' },
-      })
 
       await prisma.adminUser.update({
         where: { id: user.id },
-        data: { avatar: { update: { id: createdImage.id } } },
+        data: {
+          avatar: {
+            upsert: {
+              create: { url: '/admin_users/' + imageName, url_sm: '' },
+              update: { url: '/admin_users/' + imageName },
+            },
+          },
+        },
       })
-
-      if (user?.avatar) {
-        const deletedImage = await prisma.image.delete({ where: { id: user.avatar.id } })
-        Drive.delete(deletedImage.url)
-      }
     }
 
     session.flash('message', { type: 'success', title: 'User updated successfully' })
@@ -251,5 +266,18 @@ export default class AdminUsersController {
     return response.redirect().toRoute('admin_users.index')
   }
 
-  public async destroy({}: HttpContextContract) {}
+  public async destroy({ params, response, session }: HttpContextContract) {
+    const deletedUser = await prisma.adminUser.delete({
+      where: { id: Number(params.id) },
+      include: { avatar: true },
+    })
+
+    if (deletedUser?.avatar) {
+      await Drive.delete(deletedUser.avatar.url)
+      await prisma.image.delete({ where: { id: deletedUser.avatar.id } })
+    }
+
+    session.flash('message', { type: 'success', title: 'User deleted successfully' })
+    return response.redirect().toRoute('admin_users.index')
+  }
 }

@@ -23,7 +23,7 @@ model AdminUser {
   role            Role?                  @relation(fields: [roleId], references: [id], onDelete: SetNull)
   roleId          Int?
   avatar          Image?                 @relation(fields: [avatarId], references: [id])
-  avatarId        Int?
+  avatarId        Int?                   @unique
   createdAt       DateTime?              @default(now())
   updatedAt       DateTime?              @updatedAt
   lastSeen        DateTime?
@@ -118,11 +118,11 @@ model User {
 }
 
 model Image {
-  id        Int         @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   url_sm    String
   url       String
-  AdminUser AdminUser[]
-  User      User[]
+  AdminUser AdminUser?
+  User      User?
 }
 
 model HelpCenterContent {
