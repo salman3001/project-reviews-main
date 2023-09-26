@@ -267,6 +267,8 @@ export default class AdminUsersController {
   }
 
   public async destroy({ params, response, session }: HttpContextContract) {
+    console.log('Ran')
+
     const deletedUser = await prisma.adminUser.delete({
       where: { id: Number(params.id) },
       include: { avatar: true },
@@ -278,6 +280,27 @@ export default class AdminUsersController {
     }
 
     session.flash('message', { type: 'success', title: 'User deleted successfully' })
-    return response.redirect().toRoute('admin_users.index')
+    return response.redirect('back')
+  }
+
+  public async banUser({ params, session, response }: HttpContextContract) {
+    await prisma.adminUser.update({
+      where: { id: Number(params.id) },
+      data: {
+        isActive: false,
+      },
+    })
+    session.flash('message', { type: 'success', title: 'User Banned' })
+    return response.redirect('back')
+  }
+
+  public async changeRole({ params, session, response, request }: HttpContextContract) {
+    const roleId = request.input('roleId')
+    await prisma.adminUser.update({
+      where: { id: Number(params.id) },
+      data: { roleId: roleId },
+    })
+    session.flash('message', { type: 'success', title: 'Role Updated' })
+    return response.redirect('back')
   }
 }

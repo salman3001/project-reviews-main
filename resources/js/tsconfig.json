@@ -5,6 +5,7 @@
     "outDir": "build",
     "rootDir": "./",
     "sourceMap": true,
-    "lib": ["DOM"]
+    "lib": ["DOM"],
+    "experimentalDecorators": true
   }
 }

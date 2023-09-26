@@ -35,6 +35,7 @@
       </a>
     </div>
   </div>
+  <simple-greeting name="Markup"></simple-greeting>
   <div class="overflow-x-scroll overflow-y-visible pb-16 mt-8">
     <table class="table table-zebra mt-6 ">
       <thead>
@@ -78,17 +79,25 @@
                 Select an Options
               </label>
               <ul class="p-1 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-32 border-t-4 border-black">
-                <li><a href="" class="text-sm p-1">Change Role</a></li>
-                <li><a href="" class="text-sm p-1">Ban User</a></li>
+                <li><button class="text-sm text-start p-1" data-modal="changeRoleForm"
+                    data-action="{{ route('admin_users.changerole',{id:user.id})}}" data-csrf="{{ csrfField()}}"
+                    data-roles="{{JSON.stringify(roles)}}"
+                    data-currentRole="{{user?.role ? JSON.stringify(user.role): null}}">Change
+                    Role</a>
+                  </button></li>
+                <li> <button class="text-sm text-start p-1" data-modal="userBanForm"
+                    data-action="{{ route('admin_users.ban',{id:user.id})}}" data-csrf="{{ csrfField()}}">Ban
+                    User</a>
+                  </button></li>
                 <li><a href="{{ route('admin_users.edit',{id:user.id})}}" class="text-sm p-1">Edit User</a></li>
                 <li>
-                  <form id="{{'delete-user-form'+user.id}}" class="p-0"
-                    action="{{ route('admin_users.destroy',{id:user.id},{qs:{_method:'DELETE'}})}}" method="post">
-                    {{ csrfField() }}
-                    <button class="text-sm text-start p-1">Delete
-                      User</a>
-                    </button>
-                  </form>
+
+                  <button class="text-sm text-start p-1" data-modal="userDeleteForm"
+                    data-action="{{ route('admin_users.destroy',{id:user.id},{qs:{_method:'DELETE'}})}}"
+                    data-csrf="{{ csrfField() }}">Delete
+                    User</a>
+                  </button>
+
                 </li>
               </ul>
             </div>
@@ -99,28 +108,11 @@
       </tbody>
     </table>
   </div>
-  <div class="mt-4 flex justify-end">
+  <div class=" mt-4 flex justify-end">
     @!component('components/pagination',{
     pagination
     })
   </div>
-  <label for="delete-user-modal" class="text-sm text-start p-1">Change Role</label>
-  <input type="checkbox" id="delete-user-modal" class="modal-toggle" checked />
-  <div class="modal">
-    <div class="modal-box">
-      <h3 class="text-lg font-bold">Hello!</h3>
-      <p class="py-4">This modal works with a hidden checkbox!</p>
-    </div>
-    <label class="modal-backdrop" for="delete-user-modal">Close</label>
-  </div>
+
 </section>
-<button onclick="togelDeleteModal()">ds</button>
-<script>
-  const togelDeleteModal =()=>{
-    const elem= document.getElementById('delete-user-modal')
-    if(elem){
-      elem.checked=elem.checked===true?false:true
-    }
-  }
-</script>
 @end
