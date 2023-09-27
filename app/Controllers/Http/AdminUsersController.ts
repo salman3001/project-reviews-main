@@ -298,7 +298,7 @@ export default class AdminUsersController {
     const roleId = request.input('roleId')
     await prisma.adminUser.update({
       where: { id: Number(params.id) },
-      data: { roleId: roleId },
+      data: { roleId: Number(roleId) },
     })
     session.flash('message', { type: 'success', title: 'Role Updated' })
     return response.redirect('back')

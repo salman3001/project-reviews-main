@@ -1,0 +1,47 @@
+@layout('layouts/adminLayout')
+@set('title', 'Home page')
+@set('$', flashMessages)
+@set('fl', flashMessages.all())
+
+
+@section('body')
+<section class="mt-8 mb-16">
+  <div class="flex items-center gap-4">
+    <a href="{{route('roles.index')}}">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+        class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+      </svg>
+    </a>
+    <div class="flex flex-col ">
+      <h1 class="text-2xl font-bold ">Edit Role</h1>
+      <p class="text-base-400 text-sm">Add or remove role permissions</p>
+    </div>
+  </div>
+  <form action="{{route('roles.update',{id:role.id},{qs:{_method:'PUT'}})}}" method="post" class="mt-4"
+    enctype="multipart/form-data">
+    {{ csrfField() }}
+    <div class="pt-2">
+      <p class="text-xl font-semibold">{{role.name}}</p>
+    </div>
+    <div class="py-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      @each(permission in permissions)
+      <div class="flex gap-2 justify-start items-center">
+        <input type="checkbox" class="checkbox checkbox-sm" name="permissionId[]" id="check-{{permission.id}}"
+          {{rolePermissions.includes(permission.id) && "checked" }} value="{{permission.id}}"
+          {{role.name==="Super Admin" && "disabled" }} />
+        <label class="cursor-pointer text-black font-semibold" for="check-{{permission.id}}">{{permission.name}}</label>
+      </div>
+      @end
+    </div>
+
+    <div class="flex justify-end mt-8 gap-8">
+      <a class="btn w-36 btn-sm text-base-400 bg-base-300 " href="{{route('roles.index')}}">
+        Cancle
+      </a>
+      <button type="submit" class="btn w-36 btn-sm btn-primary" {{role.name==="Super Admin" && "disabled"
+        }}>Save</button>
+    </div>
+  </form>
+</section>
+@end

@@ -82,7 +82,7 @@
                 <li><button class="text-sm text-start p-1" data-modal="changeRoleForm"
                     data-action="{{ route('admin_users.changerole',{id:user.id})}}" data-csrf="{{ csrfField()}}"
                     data-roles="{{JSON.stringify(roles)}}"
-                    data-currentRole="{{user?.role ? JSON.stringify(user.role): null}}">Change
+                    data-current-role="{{user?.role ? JSON.stringify(user.role) : null}}">Change
                     Role</a>
                   </button></li>
                 <li> <button class="text-sm text-start p-1" data-modal="userBanForm"

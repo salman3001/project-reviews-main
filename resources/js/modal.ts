@@ -39,10 +39,8 @@ export const modal = () => {
       let currentRole = (e.target as HTMLButtonElement).dataset.currentRole as unknown as Role
 
       if (currentRole) {
-        currentRole = JSON.stringify(currentRole) as unknown as Role
+        currentRole = JSON.parse(currentRole as unknown as string) as unknown as Role
       }
-
-      console.log(roles)
       modalContent.innerHTML = changeRoleForm(action, csrf, roles, currentRole)
     }
 
@@ -96,19 +94,20 @@ const changeRoleForm = (action: string, csrf: string, roles: Roles, currentRole:
 ${csrf}
 <div class="grid grid-cols-2 w-full">
 
-${roles.map(
-  (role) => `
+${roles
+  .map(
+    (role) => `
 <div class="form-control">
 <label class="label cursor-pointer gap-2 justify-center">
   <input type="radio" name="roleId" class="radio checked:bg-primary" value=${role.id} ${
-    currentRole && currentRole.id === role.id && 'checked'
+    currentRole && currentRole.name === role.name && 'checked'
   } />
   <span class="label-text">${role.name}</span>
 </label>
 </div>
 `
-)}
-
+  )
+  .join('')}
 </div>
 
 <div class="flex justify-end gap-4 w-full">
