@@ -5,8 +5,8 @@
  * file.
  */
 
-import { PrismaAuthProviderConfig, PrismaAuthProviderContract } from '@ioc:Adonis/Addons/Prisma'
-import { AdminUser, User } from '@prisma/client'
+import AdminUser from 'App/Models/AdminUser'
+import User from 'App/Models/User'
 
 declare module '@ioc:Adonis/Addons/Auth' {
   /*
@@ -27,22 +27,20 @@ declare module '@ioc:Adonis/Addons/Auth' {
     | User Provider
     |--------------------------------------------------------------------------
     |
-    | The following provider directlly uses Database query builder for fetching
-    | user details from the database for authentication.
+    | The following provider uses Lucid models as a driver for fetching user
+    | details from the database for authentication.
     |
     | You can create multiple providers using the same underlying driver with
-    | different database tables.
+    | different Lucid models.
     |
     */
-    adminUser: {
-      implementation: PrismaAuthProviderContract<AdminUser>
-      config: PrismaAuthProviderConfig<AdminUser>
-    }
     user: {
-      // @ts-ignore
-      implementation: PrismaAuthProviderContract<User>
-      // @ts-ignore
-      config: PrismaAuthProviderConfig<User>
+      implementation: LucidProviderContract<typeof User>
+      config: LucidProviderConfig<typeof User>
+    }
+    adminUser: {
+      implementation: LucidProviderContract<typeof AdminUser>
+      config: LucidProviderConfig<typeof AdminUser>
     }
   }
 
@@ -71,15 +69,15 @@ declare module '@ioc:Adonis/Addons/Auth' {
     | the `user` provider for fetching user details.
     |
     */
-    adminUserGuard: {
-      implementation: SessionGuardContract<'adminUser', 'adminUserGuard'>
-      config: SessionGuardConfig<'adminUser'>
-      client: SessionClientContract<'adminUser'>
-    }
-    userGuard: {
-      implementation: SessionGuardContract<'user', 'userGuard'>
+    webUser: {
+      implementation: SessionGuardContract<'user', 'webUser'>
       config: SessionGuardConfig<'user'>
       client: SessionClientContract<'user'>
+    }
+    webAdmin: {
+      implementation: SessionGuardContract<'adminUser', 'webAdmin'>
+      config: SessionGuardConfig<'adminUser'>
+      client: SessionClientContract<'adminUser'>
     }
   }
 }

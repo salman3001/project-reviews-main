@@ -6,7 +6,7 @@ export default class AuthController {
     const password = request.input('password')
     const rememberMe = request.input('rememberMe')
     try {
-      await auth.use('adminUserGuard').attempt(email, password, rememberMe)
+      await auth.use('webAdmin').attempt(email, password, rememberMe)
     } catch (error) {
       session.flash('message', 'Invalid credentials')
       return response.redirect('back')
@@ -16,7 +16,7 @@ export default class AuthController {
   }
 
   public async adminLogout({ auth, response }: HttpContextContract) {
-    await auth.use('adminUserGuard').logout(true)
+    await auth.use('webAdmin').logout(true)
 
     return response.redirect().toRoute('admin.login')
   }

@@ -4,82 +4,32 @@ import { paginate } from 'App/Helpers/Paginate'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Hash from '@ioc:Adonis/Core/Hash'
 import Drive from '@ioc:Adonis/Core/Drive'
+import Role from 'App/Models/Role'
+import AdminUser from 'App/Models/AdminUser'
 
 export default class AdminUsersController {
   public async index({ view, request }: HttpContextContract) {
-    const query = request.qs()
-    const sortBy = query.sortBy
-    const roleId = Number(query.roleId)
-    const search = query.search
-    const isActive = query.isActive ? JSON.parse(query.isActive) : undefined
-    const page = Number(query.page) || 1
-    const take = 3
-    let pagination = {}
+    const { sortBy, roleId, search, isActive } = request.qs()
 
-    let users: any[] = []
-    let count = 0
+    const query = AdminUser.query()
 
     if (search) {
-      users = await prisma.adminUser.findMany({
-        where: { OR: [{ firstName: { contains: search } }, { lastName: { contains: search } }] },
-        include: { role: { select: { name: true } }, avatar: { select: { url: true } } },
-        skip: take * (page - 1),
-        take,
-      })
-      count = await prisma.adminUser.count({
-        where: {
-          OR: [{ firstName: { contains: search } }, { lastName: { contains: search } }],
-        },
-      })
-      pagination = paginate(count, page, take, 'admin_users.index')
-    } else if (sortBy) {
-      users = await prisma.adminUser.findMany({
-        include: { role: { select: { name: true } }, avatar: { select: { url: true } } },
-        orderBy: { [sortBy]: true },
-        skip: take * (page - 1),
-        take,
-      })
-      count = await prisma.adminUser.count({})
-      pagination = paginate(count, page, take, 'admin_users.index')
-    } else if (roleId) {
-      users = await prisma.adminUser.findMany({
-        include: { role: { select: { name: true } }, avatar: { select: { url: true } } },
-        where: { roleId: roleId },
-        skip: take * (page - 1),
-        take,
-      })
-      count = await prisma.adminUser.count({ where: { roleId: roleId } })
-      pagination = paginate(count, page, take, 'admin_users.index')
-    } else if (sortBy) {
-      users = await prisma.adminUser.findMany({
-        include: { role: { select: { name: true } }, avatar: { select: { url: true } } },
-        orderBy: { [sortBy]: true },
-        skip: take * (page - 1),
-        take,
-      })
-      count = await prisma.adminUser.count({})
-      pagination = paginate(count, page, take, 'admin_users.index')
-    } else if (isActive !== undefined) {
-      users = await prisma.adminUser.findMany({
-        include: { role: { select: { name: true } }, avatar: { select: { url: true } } },
-        where: { isActive },
-        skip: take * (page - 1),
-        take,
-      })
-      count = await prisma.adminUser.count({ where: { isActive } })
-      pagination = paginate(count, page, take, 'admin_users.index')
-    } else {
-      users = await prisma.adminUser.findMany({
-        include: { role: { select: { name: true } }, avatar: { select: { url: true } } },
-        skip: take * (page - 1),
-        take,
-      })
-      count = await prisma.adminUser.count({})
-      pagination = paginate(count, page, take, 'admin_users.index')
+      query.whereLike('firstName', `%${search}%`).orWhereLike('lastName', `%${search}%`)
     }
 
-    const roles = await prisma.role.findMany()
-    return view.render('admin/admin-users/index', { users, roles, pagination, query })
+    if (roleId) {
+      query.whereHas('role', (q) => {
+        q.where('id', roleId)
+      })
+    }
+
+    if (isActive) {
+      query.where('isActive', true)
+    }
+
+    const users = await query.exec()
+    const roles = []
+    return view.render('admin/admin-users/index', { users, roles, query })
   }
 
   public async create({ view }: HttpContextContract) {

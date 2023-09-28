@@ -9,10 +9,10 @@ export default class Guest {
   ) {
     // code for middleware goes here. ABOVE THE NEXT CALL
     if (await auth.use(guardName[0]).check()) {
-      if (guardName[0] === 'adminUserGuard') {
+      if (guardName[0] === 'webAdmin') {
         return response.redirect().toRoute('admin.dashboard')
       }
-      if (guardName[0] === 'userGuard') {
+      if (guardName[0] === 'webUser') {
         return response.redirect().toRoute('home')
       }
     }

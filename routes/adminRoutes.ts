@@ -20,7 +20,7 @@ Route.group(() => {
     )
     Route.resource('roles', 'RolesController')
     Route.get('permissions', 'PermissiosnController.index').as('permissions.index')
-  }).middleware('auth:adminUserGuard')
+  }).middleware('auth:webAdmin')
 
   //guest routes
   Route.group(() => {
@@ -29,5 +29,5 @@ Route.group(() => {
     }).as('admin.login')
 
     Route.post('login', 'AuthController.adminLogin').as('admin.login.post')
-  }).middleware('guest:adminUserGuard')
+  }).middleware('guest:webAdmin')
 }).prefix('admin')
