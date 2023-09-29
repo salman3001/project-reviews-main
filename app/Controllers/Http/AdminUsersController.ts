@@ -1,15 +1,15 @@
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { paginate } from 'App/Helpers/Paginate'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Hash from '@ioc:Adonis/Core/Hash'
 import Drive from '@ioc:Adonis/Core/Drive'
-import Role from 'App/Models/Role'
 import AdminUser from 'App/Models/AdminUser'
+import Role from 'App/Models/Role'
+import Country from 'App/Models/Country'
 
 export default class AdminUsersController {
   public async index({ view, request }: HttpContextContract) {
-    const { sortBy, roleId, search, isActive } = request.qs()
+    const { orderBy, roleId, search, isActive, page } = request.qs()
 
     const query = AdminUser.query()
 
@@ -24,62 +24,69 @@ export default class AdminUsersController {
     }
 
     if (isActive) {
-      query.where('isActive', true)
+      query.where('is_active', +isActive)
     }
 
-    const users = await query.exec()
-    const roles = []
-    return view.render('admin/admin-users/index', { users, roles, query })
+    const users = await query.orderBy(orderBy || 'first_name').paginate(page || 1, 2)
+    users.baseUrl('/admin/admin-users')
+    const roles = await Role.all()
+
+    return view.render('admin/admin-users/index', { users, roles, query: { ...request.qs() } })
   }
 
   public async create({ view }: HttpContextContract) {
-    const roles = await prisma.role.findMany()
-    const cities = await prisma.city.findMany()
-    const states = await prisma.state.findMany()
-    const country = await prisma.country.findMany()
+    const roles = await Role.all()
+    const countries = await Country.all()
 
-    return view.render('admin/admin-users/create', { roles, cities, states, country })
+    return view.render('admin/admin-users/create', { roles, countries })
   }
 
   public async store({ request, response, session }: HttpContextContract) {
-    const validationSchema = schema.create({
-      image: schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'webp', 'gif'], size: '2mb' }),
-      email: schema.string({ trim: true }, [rules.email()]),
+    const userSchema = schema.create({
+      image: schema.file.optional({
+        extnames: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
+        size: '2mb',
+      }),
+      email: schema.string({ trim: true }, [
+        rules.email(),
+        rules.unique({ table: 'admin_users', column: 'email' }),
+      ]),
       firstName: schema.string({ trim: true }),
       lastName: schema.string({ trim: true }),
       phone: schema.string.optional({ trim: true }, [rules.minLength(8)]),
       password: schema.string({ trim: true }, [rules.minLength(8), rules.alphaNum()]),
       isActive: schema.string.optional(),
-      roleId: schema.string.optional(),
-      address: schema.object().members({
-        address: schema.string.optional(),
-        cityId: schema.number.optional(),
-        stateId: schema.number.optional(),
-        countryId: schema.number.optional(),
-        zip: schema.string.optional(),
-      }),
-      social: schema.object().members({
-        website: schema.string.optional(),
-        facebook: schema.string.optional(),
-        twitter: schema.string.optional(),
-        instagram: schema.string.optional(),
-        pintrest: schema.string.optional(),
-        vk: schema.string.optional(),
-        whatsapp: schema.string.optional(),
-        telegram: schema.string.optional(),
-      }),
     })
 
-    const payload = await request.validate({ schema: validationSchema })
+    const roleSchema = schema.create({
+      id: schema.string.optional(),
+    })
 
-    const isEmailExist = await prisma.adminUser.findFirst({ where: { email: payload.email } })
-    if (isEmailExist) {
-      session.flashAll()
-      session.flash('errors.email', 'Email already taken')
-      return response.redirect('back')
-    }
+    const addressSchema = schema.create({
+      address: schema.string.optional(),
+      cityId: schema.number.optional(),
+      stateId: schema.number.optional(),
+      countryId: schema.number.optional(),
+      zip: schema.string.optional(),
+    })
 
-    const Hashedpassword = await Hash.make(payload.password)
+    const socialSchema = schema.create({
+      website: schema.string.optional(),
+      facebook: schema.string.optional(),
+      twitter: schema.string.optional(),
+      instagram: schema.string.optional(),
+      pintrest: schema.string.optional(),
+      vk: schema.string.optional(),
+      whatsapp: schema.string.optional(),
+      telegram: schema.string.optional(),
+    })
+
+    const userPayload = await request.validate({ schema: userSchema })
+    const rolePayload = await request.validate({ schema: roleSchema })
+    const addressPayload = await request.validate({ schema: addressSchema })
+    const socialPayload = await request.validate({ schema: socialSchema })
+
+    // const user = await AdminUser.create({})
 
     const user = await prisma.adminUser.create({
       data: {
@@ -143,14 +150,14 @@ export default class AdminUsersController {
       phone: schema.string.optional({ trim: true }, [rules.minLength(8)]),
       isActive: schema.string.optional(),
       roleId: schema.string.optional(),
-      address: schema.object().members({
+      address: schema.create({
         address: schema.string.optional(),
         cityId: schema.number.optional(),
         stateId: schema.number.optional(),
         countryId: schema.number.optional(),
         zip: schema.string.optional(),
       }),
-      social: schema.object().members({
+      social: schema.create({
         website: schema.string.optional(),
         facebook: schema.string.optional(),
         twitter: schema.string.optional(),

@@ -6,6 +6,9 @@
 
 @section('body')
 <section class="mt-8 mb-16">
+  {{
+  inspect(fl)
+  }}
   <div class="flex items-center gap-4">
     <a href="{{route('admin_users.index')}}">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -23,51 +26,52 @@
     <div class="space-y-4">
       <p class="text-xl font-semibold">General Information</p>
       <div class="flex flex-col  sm:flex-row gap-4">
-        @!component('components/imageInput')
+        @!component('components/imageInput',{name:"user[image]"})
         <div class="w-full flex flex-wrap gap-4">
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Email</span>
             </label>
             <input type="text" placeholder="Type here"
-              class="input input-bordered w-full max-w-md {{fl?.errors?.email && " input-error" }}" name="email"
-              value="{{fl?.email??"" }}" />
-            <span class="text-red-500">{{fl?.errors?.email ?? "" }}</span>
+              class="input input-bordered w-full max-w-md {{$.has('errors.user.email') && " input-error" }}"
+              name="user[email]" value="{{$.get('user.email')||"" }}" />
+            <span class="text-red-500">{{$.has('errors.user.email')||"" }}</span>
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Password</span>
             </label>
             <input type="password" placeholder="Type here"
-              class="input input-bordered w-full max-w-md {{fl?.errors?.password && " input-error"}}" name="password" />
-            <span class="text-red-500">{{fl?.errors?.password ?? "" }}</span>
+              class="input input-bordered w-full max-w-md {{fl?.errors[user?.password] && " input-error"}}"
+              name="user[password]" />
+            <span class="text-red-500">{{fl?.errors['user?.password'] ?? "" }}</span>
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">First name</span>
             </label>
             <input type="text" placeholder="Type here"
-              class="input input-bordered w-full  max-w-md {{fl?.errors?.firstName && " input-error"}}" name="firstName"
-              value="{{fl?.firstName ??""  }}" />
-            <span class="text-red-500">{{fl?.errors?.firstName ??"" }}</span>
+              class="input input-bordered w-full  max-w-md {{fl?.errors['user?.firstName'] && " input-error"}}"
+              name="user[firstName]" value="{{fl?.user?.firstName ??""  }}" />
+            <span class="text-red-500">{{fl?.errors['user?.firstName'] ??"" }}</span>
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Last Name</span>
             </label>
             <input type="text" placeholder="Type here"
-              class="input input-bordered w-full  max-w-md {{fl?.errors?.lastName && " input-error"}}" name="lastName"
-              value="{{fl?.lastName ?? "" }}" />
-            <span class=" text-red-500">{{fl?.errors?.lastName ??"" }}</span>
+              class="input input-bordered w-full  max-w-md {{fl?.errors['user?.lastName'] && " input-error"}}"
+              name='user[lastName]' value="{{fl?.user?.lastName ?? "" }}" />
+            <span class=" text-red-500">{{fl?.errors['user?.lastName'] ??"" }}</span>
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Phone</span>
             </label>
             <input type="number" placeholder="Type here"
-              class="input input-bordered w-full  max-w-md {{fl?.errors?.phone && " input-error"}}" name="phone"
-              value="{{fl?.phone??"" }}" />
-            <span class="text-red-500">{{fl?.errors?.phone ?? "" }}</span>
+              class="input input-bordered w-full  max-w-md {{fl?.errors?.user?.phone && " input-error"}}"
+              name="user[phone]" value="{{fl?.user?.phone??"" }}" />
+            <span class="text-red-500">{{fl?.errors?.user?.phone ?? "" }}</span>
           </div>
 
         </div>
@@ -79,8 +83,8 @@
         <div class="w-full flex flex-wrap gap-4">
           <div class="form-control">
             <label class="label cursor-pointer gap-2">
-              <input type="checkbox" class="toggle" name="isActive" value="true" {{fl?.isActive && fl.isActive==="true"
-                && "checked" }} />
+              <input type="checkbox" class="toggle" name="isActive" value="true" {{fl?.role?.isActive &&
+                fl.role?.isActive==="true" && "checked" }} />
               <span class="label-text ">Activate</span>
             </label>
           </div>
@@ -92,7 +96,7 @@
           <select class="select select-bordered " name="roleId">
             <option disabled selected>Role</option>
             @each(role in roles)
-            <option value="{{role.id}}" {{fl?.roleId && fl?.roleId==role.id && "selected" }}>{{role.name}}
+            <option value="{{role.id}}" {{fl?.role?.id && fl?.role?.id==role.id && "selected" }}>{{role.name}}
             </option>
             @endeach
           </select>

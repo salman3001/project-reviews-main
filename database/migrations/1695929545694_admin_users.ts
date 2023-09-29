@@ -9,11 +9,11 @@ export default class extends BaseSchema {
       table.string('email', 255).notNullable().unique()
       table.string('password', 180).notNullable()
       table.string('remember_me_token').nullable()
-      table.string('firstName', 50)
-      table.string('lastName')
+      table.string('first_name', 50)
+      table.string('last_name')
       table.integer('phone', 12).unsigned()
       table.string('desc')
-      table.boolean('isActive').defaultTo(false).notNullable()
+      table.boolean('is_active').defaultTo(false).notNullable()
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */

@@ -1,6 +1,14 @@
 import { DateTime } from 'luxon'
 import Hash from '@ioc:Adonis/Core/Hash'
-import { column, beforeSave, BaseModel, hasOne, HasOne } from '@ioc:Adonis/Lucid/Orm'
+import {
+  column,
+  beforeSave,
+  BaseModel,
+  hasOne,
+  HasOne,
+  belongsTo,
+  BelongsTo,
+} from '@ioc:Adonis/Lucid/Orm'
 import Image from './Image'
 import Role from './Role'
 
@@ -33,14 +41,14 @@ export default class AdminUser extends BaseModel {
   public isActive: boolean
 
   @hasOne(() => Role, {
-    foreignKey: 'admin_user_id',
+    foreignKey: 'adminUserId',
   })
   public role: HasOne<typeof Role>
 
-  @hasOne(() => Image, {
-    foreignKey: 'avatarId',
+  @belongsTo(() => Image, {
+    foreignKey: 'adminUserId',
   })
-  public avatar: HasOne<typeof Image>
+  public avatar: BelongsTo<typeof Image>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
