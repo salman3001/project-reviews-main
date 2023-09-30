@@ -2,13 +2,14 @@
 @set('title', 'Home page')
 @set('$', flashMessages)
 @set('fl', flashMessages.all())
+@set('errors', flashMessages.get("errors"))
 
 
 @section('body')
 <section class="mt-8 mb-16">
-  {{
-  inspect(fl)
-  }}
+
+  {{inspect(fl)}}
+
   <div class="flex items-center gap-4">
     <a href="{{route('admin_users.index')}}">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -18,7 +19,7 @@
     </a>
     <div class="flex flex-col items-center">
       <h1 class="text-2xl font-bold">Add User</h1>
-      <p class="text-base-400 text-sm">Add user details</p>
+      <p class="text-base-400 text-sm" id="click">Add user details</p>
     </div>
   </div>
   <form action="{{ route('admin_users.store')}}" method="post" class="mt-4" enctype="multipart/form-data">
@@ -26,52 +27,51 @@
     <div class="space-y-4">
       <p class="text-xl font-semibold">General Information</p>
       <div class="flex flex-col  sm:flex-row gap-4">
-        @!component('components/imageInput',{name:"user[image]"})
+        @!component('components/imageInput',{name:"image"})
         <div class="w-full flex flex-wrap gap-4">
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Email</span>
             </label>
-            <input type="text" placeholder="Type here"
-              class="input input-bordered w-full max-w-md {{$.has('errors.user.email') && " input-error" }}"
-              name="user[email]" value="{{$.get('user.email')||"" }}" />
-            <span class="text-red-500">{{$.has('errors.user.email')||"" }}</span>
+            <input type="text" placeholder="Type here" class="{{fl?.errors['user.email'] && 'input-error' }} input
+              input-bordered w-full max-w-md " name="user[email]" value="{{$.get('user.email')||"" }}" />
+            <span class="text-red-500">{{fl?.errors['user.email'] ||"" }}</span>
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Password</span>
             </label>
             <input type="password" placeholder="Type here"
-              class="input input-bordered w-full max-w-md {{fl?.errors[user?.password] && " input-error"}}"
+              class="input input-bordered w-full max-w-md {{fl?.errors['user.password'] && " input-error"}}"
               name="user[password]" />
-            <span class="text-red-500">{{fl?.errors['user?.password'] ?? "" }}</span>
+            <span class="text-red-500">{{fl?.errors['user.password'] ?? "" }}</span>
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">First name</span>
             </label>
             <input type="text" placeholder="Type here"
-              class="input input-bordered w-full  max-w-md {{fl?.errors['user?.firstName'] && " input-error"}}"
+              class="input input-bordered w-full  max-w-md {{fl?.errors['user.firstName'] && " input-error"}}"
               name="user[firstName]" value="{{fl?.user?.firstName ??""  }}" />
-            <span class="text-red-500">{{fl?.errors['user?.firstName'] ??"" }}</span>
+            <span class="text-red-500">{{fl?.errors['user.firstName'] ??"" }}</span>
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Last Name</span>
             </label>
             <input type="text" placeholder="Type here"
-              class="input input-bordered w-full  max-w-md {{fl?.errors['user?.lastName'] && " input-error"}}"
+              class="input input-bordered w-full  max-w-md {{fl?.errors['user.lastName'] && " input-error"}}"
               name='user[lastName]' value="{{fl?.user?.lastName ?? "" }}" />
-            <span class=" text-red-500">{{fl?.errors['user?.lastName'] ??"" }}</span>
+            <span class=" text-red-500">{{fl?.errors['user.lastName'] ??"" }}</span>
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Phone</span>
             </label>
             <input type="number" placeholder="Type here"
-              class="input input-bordered w-full  max-w-md {{fl?.errors?.user?.phone && " input-error"}}"
+              class="input input-bordered w-full  max-w-md {{fl?.errors['user.phone'] && " input-error"}}"
               name="user[phone]" value="{{fl?.user?.phone??"" }}" />
-            <span class="text-red-500">{{fl?.errors?.user?.phone ?? "" }}</span>
+            <span class="text-red-500">{{fl?.errors['user.phone'] ?? "" }}</span>
           </div>
 
         </div>
@@ -83,8 +83,8 @@
         <div class="w-full flex flex-wrap gap-4">
           <div class="form-control">
             <label class="label cursor-pointer gap-2">
-              <input type="checkbox" class="toggle" name="isActive" value="true" {{fl?.role?.isActive &&
-                fl.role?.isActive==="true" && "checked" }} />
+              <input type="checkbox" class="toggle" name="user[isActive]" value="1" {{fl?.user?.isActive==1 && "checked"
+                }} />
               <span class="label-text ">Activate</span>
             </label>
           </div>
@@ -93,7 +93,7 @@
           <label class="">
             <span class="label-text">Select Role</span>
           </label>
-          <select class="select select-bordered " name="roleId">
+          <select class="select select-bordered " name="role[id]">
             <option disabled selected>Role</option>
             @each(role in roles)
             <option value="{{role.id}}" {{fl?.role?.id && fl?.role?.id==role.id && "selected" }}>{{role.name}}
@@ -113,9 +113,9 @@
               <span class="label-text">Adress</span>
             </label>
             <input type="text" placeholder="Type here"
-              class="input input-bordered w-full max-w-2xl {{fl?.errors?.address?.address && 'input-error'}}"
+              class="input input-bordered w-full max-w-2xl {{fl?.errors['address.address'] && 'input-error'}}"
               name="address[address]" value="{{fl?.address?.address ?? "" }}" />
-            <span class="text-red-500">{{fl?.errors?.address?.address ??"" }}</span>
+            <span class="text-red-500">{{fl?.errors['address.address'] ??"" }}</span>
           </div>
           <div class="form-control w-full max-w-2xl">
             <label class="">
@@ -154,14 +154,14 @@
               @endeach
             </select>
           </div>
-          <div class="form-control w-full max-w-xs">
+          <div class="form-control w-full max-w-2xl">
             <label class="">
               <span class="label-text">Zipcode</span>
             </label>
             <input type="text" placeholder="Type here"
-              class="input input-bordered w-full  max-w-md {{fl?.errors?.address?.zip && 'input-error'}}"
+              class="input input-bordered w-full  max-w-2xl {{fl?.errors['address.zip'] && 'input-error'}}"
               name="address[zip]" />
-            <span class="text-red-500">{{fl?.errors?.address?.zip ?? "" }}</span>
+            <span class="text-red-500">{{fl?.errors['address.zip'] ?? "" }}</span>
           </div>
         </div>
       </div>
@@ -237,4 +237,11 @@
     </div>
   </form>
 </section>
+<script>
+  $(document).ready(()=>{
+    $("#click").on("click",()=>{
+      alert("heelo")
+    })
+  })
+</script>
 @end

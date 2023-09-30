@@ -19,6 +19,6 @@ export default class extends BaseSeeder {
 
     const role = await Role.find(1)
 
-    if (role) user.related('role').save(role)
+    if (role) user.related('role').associate(role)
   }
 }

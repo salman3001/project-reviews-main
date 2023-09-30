@@ -5,6 +5,15 @@ export default class Image extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
+  @column()
+  public url: string
+
+  @column()
+  public url_sm: string
+
+  @column({ isPrimary: true })
+  public adminUserId: number
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

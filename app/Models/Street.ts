@@ -8,6 +8,9 @@ export default class Street extends BaseModel {
   @column()
   public name: string
 
+  @column()
+  public cityId: number
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

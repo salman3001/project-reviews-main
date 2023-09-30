@@ -4,6 +4,9 @@
 
 @section('body')
 <section>
+  @each(user in users)
+  {{inspect(user.avatar)}}
+  @endeach
   <div class="flex flex-wrap gap-4 justify-between mt-8">
     <div>
       @!component('components/admin/searchInput',{
@@ -112,7 +115,7 @@
     @!component('components/pagination',{
     prevPageUrl:users.getPreviousPageUrl(),
     pages:users.getUrlsForRange(users.firstPage, users.lastPage),
-    NextPageUrl:users.getNextPageUrl()
+    nextPageUrl:users.getNextPageUrl()
     })
   </div>
 

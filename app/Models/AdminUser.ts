@@ -11,6 +11,8 @@ import {
 } from '@ioc:Adonis/Lucid/Orm'
 import Image from './Image'
 import Role from './Role'
+import Address from './Address'
+import Social from './Social'
 
 export default class AdminUser extends BaseModel {
   @column({ isPrimary: true })
@@ -40,15 +42,22 @@ export default class AdminUser extends BaseModel {
   @column()
   public isActive: boolean
 
-  @hasOne(() => Role, {
-    foreignKey: 'adminUserId',
-  })
-  public role: HasOne<typeof Role>
+  @column()
+  public roleId: number
 
-  @belongsTo(() => Image, {
+  @belongsTo(() => Role)
+  public role: BelongsTo<typeof Role>
+
+  @hasOne(() => Address)
+  public address: HasOne<typeof Address>
+
+  @hasOne(() => Social)
+  public social: HasOne<typeof Social>
+
+  @hasOne(() => Image, {
     foreignKey: 'adminUserId',
   })
-  public avatar: BelongsTo<typeof Image>
+  public avatar: HasOne<typeof Image>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
@@ -60,6 +69,10 @@ export default class AdminUser extends BaseModel {
   public static async hashPassword(adminUser: AdminUser) {
     if (adminUser.$dirty.password) {
       adminUser.password = await Hash.make(adminUser.password)
+    }
+
+    if (adminUser.$dirty.email) {
+      adminUser.email = adminUser.email.toLowerCase()
     }
   }
 }

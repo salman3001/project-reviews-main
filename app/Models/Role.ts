@@ -1,12 +1,5 @@
 import { DateTime } from 'luxon'
-import {
-  BaseModel,
-  BelongsTo,
-  ManyToMany,
-  belongsTo,
-  column,
-  manyToMany,
-} from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, HasMany, ManyToMany, column, hasMany, manyToMany } from '@ioc:Adonis/Lucid/Orm'
 import AdminUser from './AdminUser'
 import Permission from './Permission'
 
@@ -15,18 +8,13 @@ export default class Role extends BaseModel {
   public id: number
 
   @column()
-  public name: string | null
+  public name: string
 
-  @belongsTo(() => AdminUser, {
-    foreignKey: 'adminUserId',
-  })
-  public AdminUser: BelongsTo<typeof AdminUser> | null
+  @hasMany(() => AdminUser)
+  public AdminUser: HasMany<typeof AdminUser>
 
   @manyToMany(() => Permission)
   public permissions: ManyToMany<typeof Permission>
-
-  @column()
-  public adminUserId: number | null
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

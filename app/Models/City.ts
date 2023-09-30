@@ -5,6 +5,9 @@ export default class City extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
+  @column()
+  public stateId: number
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

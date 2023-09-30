@@ -9,6 +9,9 @@ export default class Country extends BaseModel {
   @column()
   public name: string
 
+  @column()
+  public addressId: number
+
   @hasOne(() => State)
   public state: HasOne<typeof State>
 

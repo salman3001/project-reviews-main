@@ -53,7 +53,7 @@ export default driveConfig({
       | files.
       |
       */
-      root: Application.publicPath('uploads'),
+      root: Application.tmpPath('uploads'),
 
       /*
       |--------------------------------------------------------------------------

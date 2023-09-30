@@ -1,11 +1,12 @@
 import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
-import Hash from '@ioc:Adonis/Core/Hash'
 import Drive from '@ioc:Adonis/Core/Drive'
 import AdminUser from 'App/Models/AdminUser'
 import Role from 'App/Models/Role'
 import Country from 'App/Models/Country'
+import Image from 'App/Models/Image'
+import CreateAdminUserValidator from 'App/Validators/adminUser/CreateAdminUserValidator'
 
 export default class AdminUsersController {
   public async index({ view, request }: HttpContextContract) {
@@ -27,6 +28,7 @@ export default class AdminUsersController {
       query.where('is_active', +isActive)
     }
 
+    await query.preload('avatar')
     const users = await query.orderBy(orderBy || 'first_name').paginate(page || 1, 2)
     users.baseUrl('/admin/admin-users')
     const roles = await Role.all()
@@ -42,81 +44,34 @@ export default class AdminUsersController {
   }
 
   public async store({ request, response, session }: HttpContextContract) {
-    const userSchema = schema.create({
-      image: schema.file.optional({
-        extnames: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
-        size: '2mb',
-      }),
-      email: schema.string({ trim: true }, [
-        rules.email(),
-        rules.unique({ table: 'admin_users', column: 'email' }),
-      ]),
-      firstName: schema.string({ trim: true }),
-      lastName: schema.string({ trim: true }),
-      phone: schema.string.optional({ trim: true }, [rules.minLength(8)]),
-      password: schema.string({ trim: true }, [rules.minLength(8), rules.alphaNum()]),
-      isActive: schema.string.optional(),
-    })
+    const payload = await request.validate(CreateAdminUserValidator)
 
-    const roleSchema = schema.create({
-      id: schema.string.optional(),
-    })
+    const user = await AdminUser.create({ ...payload.user })
 
-    const addressSchema = schema.create({
-      address: schema.string.optional(),
-      cityId: schema.number.optional(),
-      stateId: schema.number.optional(),
-      countryId: schema.number.optional(),
-      zip: schema.string.optional(),
-    })
+    if (payload.address) {
+      user.related('address').create({
+        ...payload.address,
+      })
+    }
 
-    const socialSchema = schema.create({
-      website: schema.string.optional(),
-      facebook: schema.string.optional(),
-      twitter: schema.string.optional(),
-      instagram: schema.string.optional(),
-      pintrest: schema.string.optional(),
-      vk: schema.string.optional(),
-      whatsapp: schema.string.optional(),
-      telegram: schema.string.optional(),
-    })
+    if (payload.social) {
+      user.related('social').create({
+        ...payload.social,
+      })
+    }
 
-    const userPayload = await request.validate({ schema: userSchema })
-    const rolePayload = await request.validate({ schema: roleSchema })
-    const addressPayload = await request.validate({ schema: addressSchema })
-    const socialPayload = await request.validate({ schema: socialSchema })
-
-    // const user = await AdminUser.create({})
-
-    const user = await prisma.adminUser.create({
-      data: {
-        email: payload.email.toLocaleLowerCase(),
-        password: Hashedpassword,
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-        phone: payload.phone,
-        isActive: payload.isActive ? JSON.parse(payload.isActive) : false,
-        roleId: Number(payload.roleId),
-        address: {
-          create: { ...payload.address },
-        },
-        Social: { create: { ...payload.social } },
-      },
-    })
+    if (payload.role) {
+      const role = await Role.find(payload.role.id)
+      if (role) await user.related('role').associate(role)
+    }
 
     if (payload.image) {
       await payload.image.moveToDisk('./admin_users/', {
         name: user.firstName + Date.now() + '.' + payload.image.extname,
       })
       const imageName = payload.image?.fileName
-      const createdImage = await prisma.image.create({
-        data: { url: '/admin_users/' + imageName, url_sm: '' },
-      })
-
-      await prisma.adminUser.update({
-        where: { id: user.id },
-        data: { avatar: { connect: { id: createdImage.id } } },
-      })
+      const image = await Image.create({ url: '/admin_users/' + imageName })
+      await user.related('avatar').save(image)
     }
 
     session.flash('message', { type: 'success', title: 'User Created Successfully' })

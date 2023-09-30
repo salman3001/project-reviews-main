@@ -11,7 +11,14 @@ export default class extends BaseSeeder {
         name: 'Super Admin',
       }
     ).then((role) => {
-      role.related('permissions').attach([1, 2, 3, 4])
+      ;[1, 2, 3, 4].forEach(async (perm) => {
+        const permissionExist = await role
+          .related('permissions')
+          .query()
+          .where('permission_id', perm)
+          .first()
+        if (!permissionExist) role.related('permissions').attach([1])
+      })
     })
 
     await Role.updateOrCreate(
