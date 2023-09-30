@@ -17,7 +17,7 @@ export default class extends BaseSeeder {
           .query()
           .where('permission_id', perm)
           .first()
-        if (!permissionExist) role.related('permissions').attach([1])
+        if (!permissionExist) role.related('permissions').attach([perm])
       })
     })
 

@@ -6,7 +6,10 @@ import AdminUser from 'App/Models/AdminUser'
 import Role from 'App/Models/Role'
 import Country from 'App/Models/Country'
 import Image from 'App/Models/Image'
-import CreateAdminUserValidator from 'App/Validators/adminUser/CreateAdminUserValidator'
+import AdminUserValidator from 'App/Validators/adminUser/AdminUserValidator'
+import AdminUserUpdateValidator from 'App/Validators/adminUser/AdminUserUpdateValidator'
+import Address from 'App/Models/Address'
+import Social from 'App/Models/Social'
 
 export default class AdminUsersController {
   public async index({ view, request }: HttpContextContract) {
@@ -28,7 +31,7 @@ export default class AdminUsersController {
       query.where('is_active', +isActive)
     }
 
-    await query.preload('avatar')
+    await query.preload('avatar').preload('role')
     const users = await query.orderBy(orderBy || 'first_name').paginate(page || 1, 2)
     users.baseUrl('/admin/admin-users')
     const roles = await Role.all()
@@ -44,7 +47,7 @@ export default class AdminUsersController {
   }
 
   public async store({ request, response, session }: HttpContextContract) {
-    const payload = await request.validate(CreateAdminUserValidator)
+    const payload = await request.validate(AdminUserValidator)
 
     const user = await AdminUser.create({ ...payload.user })
 
@@ -81,97 +84,69 @@ export default class AdminUsersController {
   public async show({}: HttpContextContract) {}
 
   public async edit({ view, params }: HttpContextContract) {
-    const user = await prisma.adminUser.findUnique({
-      where: { id: Number(params.id) },
-      include: { address: true, Social: true, avatar: true },
+    const user = await AdminUser.find(+params.id)
+    await user?.load((loader) => {
+      loader.load('address').load('avatar').load('social')
     })
-
-    const cities = await prisma.city.findMany()
-    const states = await prisma.state.findMany()
-    const countries = await prisma.country.findMany()
-    const roles = await prisma.role.findMany()
+    const cities = []
+    const states = []
+    const countries = []
+    const roles = await Role.all()
 
     return view.render('admin/admin-users/edit', { user, cities, states, countries, roles })
   }
 
   public async update({ request, response, session, params }: HttpContextContract) {
     const id = Number(params.id)
-    console.log(id)
+    const payload = await request.validate(AdminUserUpdateValidator)
+    let user = await AdminUser.query().where('id', id).preload('address').first()
+    console.log(payload)
 
-    const validationSchema = schema.create({
-      image: schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'webp', 'gif'], size: '2mb' }),
-      firstName: schema.string({ trim: true }),
-      lastName: schema.string({ trim: true }),
-      phone: schema.string.optional({ trim: true }, [rules.minLength(8)]),
-      isActive: schema.string.optional(),
-      roleId: schema.string.optional(),
-      address: schema.create({
-        address: schema.string.optional(),
-        cityId: schema.number.optional(),
-        stateId: schema.number.optional(),
-        countryId: schema.number.optional(),
-        zip: schema.string.optional(),
-      }),
-      social: schema.create({
-        website: schema.string.optional(),
-        facebook: schema.string.optional(),
-        twitter: schema.string.optional(),
-        instagram: schema.string.optional(),
-        pintrest: schema.string.optional(),
-        vk: schema.string.optional(),
-        whatsapp: schema.string.optional(),
-        telegram: schema.string.optional(),
-      }),
-    })
-
-    const payload = await request.validate({ schema: validationSchema })
-
-    const user = await prisma.adminUser.update({
-      where: { id },
-      data: {
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-        phone: payload.phone,
-        isActive: payload.isActive ? JSON.parse(payload.isActive) : false,
-        roleId: Number(payload.roleId),
-        address: {
-          upsert: {
-            update: { ...payload.address },
-            create: { ...payload.address },
-          },
-        },
-        Social: {
-          upsert: {
-            update: { ...payload.social },
-            create: { ...payload.social },
-          },
-        },
-      },
-      include: { avatar: true },
-    })
-
-    if (payload.image) {
-      if (user?.avatar) {
-        await Drive.delete(user.avatar.url)
+    if (user) {
+      user.merge({ ...payload.user })
+      if (payload.address) {
+        if (user.address) {
+          user.address.merge(payload.address)
+        } else {
+          const address = await Address.create(payload.address)
+          user.related('address').save(address)
+        }
+      }
+      if (payload.social) {
+        await user.load('social')
+        if (user.social) {
+          user.social.merge({ ...payload.social })
+        } else {
+          const social = await Social.create(payload.social)
+          user.related('social').save(social)
+        }
+      }
+      if (payload.role?.id) {
+        user.roleId = +payload.role.id
       }
 
-      await payload.image.moveToDisk('./admin_users/', {
-        name: user.firstName + Date.now() + '.' + payload.image.extname,
-      })
-      const imageName = payload.image?.fileName
+      if (payload.image) {
+        console.log('ran')
 
-      await prisma.adminUser.update({
-        where: { id: user.id },
-        data: {
-          avatar: {
-            upsert: {
-              create: { url: '/admin_users/' + imageName, url_sm: '' },
-              update: { url: '/admin_users/' + imageName },
-            },
-          },
-        },
-      })
+        await payload.image.moveToDisk('./admin_users/', {
+          name: user.firstName + Date.now() + '.' + payload.image.extname,
+        })
+        const imageName = payload.image?.fileName
+
+        await user.load('avatar')
+        if (user.avatar) {
+          await Drive.delete(user.avatar.url)
+          user.avatar.url = '/admin_users/' + imageName
+        } else {
+          user.related('avatar').create({ url: '/admin_users/' + imageName })
+        }
+      }
     }
+
+    await user?.save()
+    await user?.address?.save()
+    await user?.social?.save()
+    await user?.avatar?.save()
 
     session.flash('message', { type: 'success', title: 'User updated successfully' })
 

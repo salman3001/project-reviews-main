@@ -48,7 +48,9 @@ export default class AdminUser extends BaseModel {
   @belongsTo(() => Role)
   public role: BelongsTo<typeof Role>
 
-  @hasOne(() => Address)
+  @hasOne(() => Address, {
+    foreignKey: 'adminUserId',
+  })
   public address: HasOne<typeof Address>
 
   @hasOne(() => Social)

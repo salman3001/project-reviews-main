@@ -1,7 +1,7 @@
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
-export default class CreateAdminUserValidator {
+export default class AdminUserValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   /*
@@ -39,25 +39,25 @@ export default class CreateAdminUserValidator {
       password: schema.string({ trim: true }, [rules.minLength(8), rules.alphaNum()]),
       isActive: schema.boolean.optional(),
     }),
-    role: schema.object().members({
-      id: schema.string.optional(),
+    role: schema.object.optional().members({
+      id: schema.string.optional({ trim: true }),
     }),
-    address: schema.object().members({
-      address: schema.string.optional(),
+    address: schema.object.optional().members({
+      address: schema.string.optional({ trim: true }),
       cityId: schema.number.optional(),
       stateId: schema.number.optional(),
       countryId: schema.number.optional(),
-      zip: schema.string.optional(),
+      zip: schema.string.optional({ trim: true }),
     }),
-    social: schema.object().members({
-      website: schema.string.optional(),
-      facebook: schema.string.optional(),
-      twitter: schema.string.optional(),
-      instagram: schema.string.optional(),
-      pintrest: schema.string.optional(),
-      vk: schema.string.optional(),
-      whatsapp: schema.string.optional(),
-      telegram: schema.string.optional(),
+    social: schema.object.optional().members({
+      website: schema.string.optional({ trim: true }),
+      facebook: schema.string.optional({ trim: true }),
+      twitter: schema.string.optional({ trim: true }),
+      instagram: schema.string.optional({ trim: true }),
+      pintrest: schema.string.optional({ trim: true }),
+      vk: schema.string.optional({ trim: true }),
+      whatsapp: schema.string.optional({ trim: true }),
+      telegram: schema.string.optional({ trim: true }),
     }),
   })
 

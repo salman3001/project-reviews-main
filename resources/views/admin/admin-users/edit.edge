@@ -18,9 +18,7 @@
       <p class="text-base-400 text-sm">Add user details</p>
     </div>
   </div>
-  {{inspect(fl)}}
-
-
+  {{inspect('errors')}}
   <form action=" {{route('admin_users.update', {id:user.id}, { qs: { _method: 'PUT' } }) }}" method="post" class="mt-4"
     enctype="multipart/form-data">
     {{ csrfField() }}
@@ -29,17 +27,16 @@
       <div class="flex flex-col  sm:flex-row gap-4">
         @!component('components/imageInput',{
         url:user?.avatar?.url && await driveUrl(user?.avatar?.url),
-        name:'user[image]'
+        name:'image'
         })
         <div class="w-full flex flex-wrap gap-4">
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Email</span>
             </label>
-            <input type="text" placeholder="Type here"
-              class="input input-bordered w-full max-w-md {{fl?.errors?.email && " input-error" }}" name="user[email]"
-              value="{{user.email ?? "" }}" disabled />
-            <span class="text-red-500">{{fl?.errors?.email ?? "" }}</span>
+            <input type="text" placeholder="Type here" class="input input-bordered w-full max-w-md " name="user[email]"
+              value="{{user.email ?? "" }}" />
+            <span class="text-red-500">{{fl?.errors['user.email'] ?? "" }}</span>
           </div>
           {{-- <div class="form-control w-full max-w-xs">
             <label class="">
@@ -54,27 +51,27 @@
               <span class="label-text">First name</span>
             </label>
             <input type="text" placeholder="Type here"
-              class="input input-bordered w-full  max-w-md {{fl?.errors?.firstName && " input-error"}}"
+              class="input input-bordered w-full  max-w-md {{fl?.errors['user.firstName'] && " input-error"}}"
               name="user[firstName]" value="{{user.firstName ?? "" }}" />
-            <span class="text-red-500">{{fl?.errors?.firstName ??"" }}</span>
+            <span class="text-red-500">{{fl?.errors['user.firstName'] ??"" }}</span>
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Last Name</span>
             </label>
             <input type="text" placeholder="Type here"
-              class="input input-bordered w-full  max-w-md {{fl?.errors?.lastName && " input-error"}}"
+              class="input input-bordered w-full  max-w-md {{fl?.errors['user.lastName'] && " input-error"}}"
               name="user[lastName]" value="{{user.lastName ?? ""  }}" />
-            <span class=" text-red-500">{{fl?.errors?.lastName ??"" }}</span>
+            <span class=" text-red-500">{{fl?.errors['user.lastName'] ??"" }}</span>
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Phone</span>
             </label>
             <input type="number" placeholder="Type here"
-              class="input input-bordered w-full  max-w-md {{fl?.errors?.phone && " input-error"}}" name="user[phone]"
-              value="{{user.phone ?? "" }}" />
-            <span class="text-red-500">{{fl?.errors?.phone ?? "" }}</span>
+              class="input input-bordered w-full  max-w-md {{fl?.errors['user.phone'] && " input-error"}}"
+              name="user[phone]" value="{{user.phone ?? "" }}" />
+            <span class="text-red-500">{{fl?.errors['user.phone'] ?? "" }}</span>
           </div>
 
         </div>
@@ -116,17 +113,17 @@
               <span class="label-text">Adress</span>
             </label>
             <input type="text" placeholder="Type here"
-              class="input input-bordered w-full max-w-2xl {{fl?.errors?.address?.address && 'input-error'}}"
+              class="input input-bordered w-full max-w-2xl {{fl?.errors['address.address'] && 'input-error'}}"
               name="address[address]" value="{{user?.address?.address ?? ""}}" />
-            <span class="text-red-500">{{fl?.errors?.address?.address ??"" }}</span>
+            <span class="text-red-500">{{fl?.errors['address.address'] ??"" }}</span>
           </div>
 
           <div class="form-control w-full max-w-2xl">
             <label class="">
               <span class="label-text">Country</span>
             </label>
-            <select class="select select-bordered " name="countryId">
-              <option disabled selected>Select Country</option>
+            <select class="select select-bordered " name="address[countryId]">
+              <option disabled selected value="">Select Country</option>
               @each(country in countries)
               <option value="{{user?.address?.country && user?.address?.country.id==country.id && " selected" }}">
                 {{country.name}}
@@ -138,8 +135,8 @@
             <label class="">
               <span class="label-text">State</span>
             </label>
-            <select class="select select-bordered " name="stateId" disabled>
-              <option disabled selected>Select State</option>
+            <select class="select select-bordered " name="address[stateId]">
+              <option disabled selected value="">Select State</option>
               {{-- @each(state in States)
               <option value="{{user?.address?.state && user?.address?.state.id==state.id && " selected" }}">
                 {{state.name}}
@@ -151,8 +148,8 @@
             <label class="">
               <span class="label-text">City</span>
             </label>
-            <select class="select select-bordered " name="cityId" disabled>
-              <option disabled selected>Select City</option>
+            <select class="select select-bordered " name="address[cityId]">
+              <option disabled selected value="">Select City</option>
               {{-- @each(city in cities)
               <option value="{{user?.address?.city && user?.address?.city.id==city.id && " selected" }}">
                 {{city.name}}
@@ -164,8 +161,8 @@
             <label class="">
               <span class="label-text">Street</span>
             </label>
-            <select class="select select-bordered " name="cityId" disabled>
-              <option disabled selected>Select Street</option>
+            <select class="select select-bordered " name="address[streetId]">
+              <option disabled selected value="">Select Street</option>
               {{-- @each(street in cities)
               <option value="{{user?.address?.city && user?.address?.city.id==city.id && " selected" }}">
                 {{city.name}}
@@ -180,9 +177,9 @@
               <span class="label-text">Zipcode</span>
             </label>
             <input type="text" placeholder="Type here"
-              class="input input-bordered w-full  max-w-md {{fl?.errors?.address?.zip && 'input-error'}}"
+              class="input input-bordered w-full  max-w-md {{fl?.errors['address.zip'] && 'input-error'}}"
               name="address[zip]" value="{{user?.address?.zip??""}}" />
-            <span class="text-red-500">{{fl?.errors?.address?.zip ?? "" }}</span>
+            <span class="text-red-500">{{fl?.errors['address.zip'] ?? "" }}</span>
           </div>
         </div>
       </div>
@@ -196,56 +193,56 @@
               <span class="label-text">Personal Website</span>
             </label>
             <input type="text" placeholder="Type here" class="input input-bordered w-full max-w-md "
-              name="social[website]" value="{{user?.Social?.website ?? ""}}" />
+              name="social[website]" value="{{user?.social?.website ?? ""}}" />
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Facebook Url</span>
             </label>
             <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
-              name="social[facebook]" value="{{user?.Social?.facebook ?? ""}}" />
+              name="social[facebook]" value="{{user?.social?.facebook ?? ""}}" />
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Twitter Url</span>
             </label>
             <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
-              name="social[twitter]" value="{{user?.Social?.twitter ?? ""}}" />
+              name="social[twitter]" value="{{user?.social?.twitter ?? ""}}" />
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Instagram Url</span>
             </label>
             <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
-              name="social[instagram]" value="{{user?.Social?.instagram ?? ""}}" />
+              name="social[instagram]" value="{{user?.social?.instagram ?? ""}}" />
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Pintrest Url</span>
             </label>
             <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
-              name="social[pintrest]" value="{{user?.Social?.pintrest ?? ""}}" />
+              name="social[pintrest]" value="{{user?.social?.pintrest ?? ""}}" />
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">VK Url</span>
             </label>
             <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md" name="social[vk]"
-              value="{{user?.Social?.vk ?? ""}}" />
+              value="{{user?.social?.vk ?? ""}}" />
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Whatsapp Url</span>
             </label>
             <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
-              name="social[whatsapp]" value="{{user?.Social?.whatsapp ?? ""}}" />
+              name="social[whatsapp]" value="{{user?.social?.whatsapp ?? ""}}" />
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="">
               <span class="label-text">Telegram Url</span>
             </label>
             <input type="text" placeholder="Type here" class="input input-bordered w-full  max-w-md"
-              name="social[telegram]" value="{{user?.Social?.telegram ?? ""}}" />
+              name="social[telegram]" value="{{user?.social?.telegram ?? ""}}" />
           </div>
         </div>
       </div>

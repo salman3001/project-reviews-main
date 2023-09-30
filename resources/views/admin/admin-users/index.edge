@@ -4,9 +4,7 @@
 
 @section('body')
 <section>
-  @each(user in users)
-  {{inspect(user.avatar)}}
-  @endeach
+
   <div class="flex flex-wrap gap-4 justify-between mt-8">
     <div>
       @!component('components/admin/searchInput',{
@@ -56,10 +54,10 @@
         @if(users)
         @each((user,i) in users)
         <tr>
-          <td>{{1 }}</td>
+          <td>{{(users.currentPage-1)*users.perPage+(i+1) }}</td>
           <td class="flex items-center gap-2">
             <div class="avatar ">
-              <div class="w-6 rounded-full ring-2 {{user.isActive ===1 ?" ring-green-600":'ring-red-600' }}">
+              <div class="w-6 rounded-full ring-2 {{user.isActive ===1 ? " ring-green-600":'ring-red-600' }}">
                 <img src="{{user.avatar ? await driveUrl(user.avatar.url) :'/images/dummy-profile.jpg'}}" />
               </div>
             </div>
@@ -82,22 +80,16 @@
                 Select an Options
               </label>
               <ul class="p-1 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-32 border-t-4 border-black">
-                <li><button class="text-sm text-start p-1" data-modal="changeRoleForm"
-                    data-action="{{ route('admin_users.changerole',{id:user.id})}}" data-csrf="{{ csrfField()}}"
-                    data-roles="{{JSON.stringify(roles)}}"
-                    data-current-role="{{user?.role ? JSON.stringify(user.role) : null}}">Change
+                <li><button class="text-sm text-start p-1">Change
                     Role</a>
                   </button></li>
-                <li> <button class="text-sm text-start p-1" data-modal="userBanForm"
-                    data-action="{{ route('admin_users.ban',{id:user.id})}}" data-csrf="{{ csrfField()}}">Ban
+                <li> <button class="text-sm text-start p-1">Ban
                     User</a>
                   </button></li>
                 <li><a href="{{ route('admin_users.edit',{id:user.id})}}" class="text-sm p-1">Edit User</a></li>
                 <li>
 
-                  <button class="text-sm text-start p-1" data-modal="userDeleteForm"
-                    data-action="{{ route('admin_users.destroy',{id:user.id},{qs:{_method:'DELETE'}})}}"
-                    data-csrf="{{ csrfField() }}">Delete
+                  <button class="text-sm text-start p-1">Delete
                     User</a>
                   </button>
 

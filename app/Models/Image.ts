@@ -11,7 +11,7 @@ export default class Image extends BaseModel {
   @column()
   public url_sm: string
 
-  @column({ isPrimary: true })
+  @column()
   public adminUserId: number
 
   @column.dateTime({ autoCreate: true })

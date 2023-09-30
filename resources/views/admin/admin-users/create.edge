@@ -2,14 +2,10 @@
 @set('title', 'Home page')
 @set('$', flashMessages)
 @set('fl', flashMessages.all())
-@set('errors', flashMessages.get("errors"))
 
 
 @section('body')
 <section class="mt-8 mb-16">
-
-  {{inspect(fl)}}
-
   <div class="flex items-center gap-4">
     <a href="{{route('admin_users.index')}}">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"

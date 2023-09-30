@@ -25,3 +25,5 @@ import '../routes/adminRoutes'
 Route.get('/', async ({ view }) => {
   return view.render('front/home')
 }).as('home')
+
+Route.get('partials/:name', 'PartialsController.getPartial')

@@ -10,7 +10,7 @@ Route.group(() => {
     Route.get('logout', 'AuthController.adminLogout').as('admin.logout')
 
     Route.resource('admin-users', 'AdminUsersController')
-    Route.get('admin-users/ban/:id', 'AdminUsersController.banUser').as('admin_users.ban')
+    Route.get('admin-users/ban/:id', 'AdminUsersController.banUser')
     Route.get('admin-users/change-role/:id', 'AdminUsersController.changeRole').as(
       'admin_users.changerole'
     )
