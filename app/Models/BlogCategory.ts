@@ -1,8 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, HasOne, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
-import State from './State'
+import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 
-export default class Country extends BaseModel {
+export default class BlogCategory extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
@@ -10,10 +9,19 @@ export default class Country extends BaseModel {
   public name: string
 
   @column()
-  public continentId: number
+  public slug: string
 
-  @hasOne(() => State)
-  public state: HasOne<typeof State>
+  @column()
+  public languageId: string
+
+  @column()
+  public metaTitle: string
+
+  @column()
+  public metaKeywords: string
+
+  @column()
+  public metaDesc: string
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

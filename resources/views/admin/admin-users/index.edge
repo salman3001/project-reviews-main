@@ -80,16 +80,24 @@
                 Select an Options
               </label>
               <ul class="p-1 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-32 border-t-4 border-black">
-                <li><button class="text-sm text-start p-1">Change
-                    Role</a>
-                  </button></li>
-                <li> <button class="text-sm text-start p-1">Ban
-                    User</a>
-                  </button></li>
+                <li>
+                  <button class="text-sm text-start p-1" data-btn="change-role-btn"
+                    data-action="{{route('AdminUsersController.changeRole',{id:user.id})}}" data-partial="{{route("PartialsController.getPartial",{name:"changeRoleForm"},{qs:{currentRole:user?.role?.id}})}}">
+                    Change Role
+                  </button>
+                </li>
+                <li>
+                  <button data-btn="ban-user-btn" data-action="{{route('AdminUsersController.banUser',{id:user.id})}}"
+                    data-partial="{{route("PartialsController.getPartial",{name:"banUserForm"})}}"
+                    class="text-sm text-start p-1">Ban
+                    User
+                  </button>
+                </li>
                 <li><a href="{{ route('admin_users.edit',{id:user.id})}}" class="text-sm p-1">Edit User</a></li>
                 <li>
-
-                  <button class="text-sm text-start p-1">Delete
+                  <button class="text-sm text-start p-1" data-btn="delete-user-btn"
+                    data-action="{{route('AdminUsersController.destroy',{id:user.id},{qs:{_method:'DELETE'}})}}"
+                    data-partial="{{route("PartialsController.getPartial",{name:"deleteAdminUserForm"})}}">Delete
                     User</a>
                   </button>
 
@@ -112,4 +120,41 @@
   </div>
 
 </section>
+<script>
+  $(document).ready(()=>{
+    //ban user
+    $('[data-btn="ban-user-btn"]').on('click',function(){
+      $('#modal').prop("checked",true)
+      $('#modal-content').html($('#spinner').html())
+      $('#modal-title').text('Ban User')
+      $('#modal-desc').text('User status will be set inactive')
+      $('#modal-content').load($(this).data('partial'),()=>{
+        $('#banUserForm').attr('action',$(this).data('action'))
+      })
+    })
+
+     //delete user
+     $('[data-btn="delete-user-btn"]').on('click',function(){
+      $('#modal').prop("checked",true)
+      $('#modal-content').html($('#spinner').html())
+      $('#modal-title').text('Delete User')
+      $('#modal-desc').text('This action can not be undone')
+      $('#modal-content').load($(this).data('partial'),()=>{
+        $('#deleteAdminUserForm').attr('action',$(this).data('action'))
+      })
+    })
+
+    //chnage user role
+    $('[data-btn="change-role-btn"]').on('click',function(){
+      $('#modal').prop("checked",true)
+      $('#modal-content').html($('#spinner').html())
+      $('#modal-title').text('Chnage User Role')
+      $('#modal-desc').text('This action will chnage users current role')
+      $('#modal-content').load($(this).data('partial'),()=>{
+        $('#changeRoleForm').attr('action',$(this).data('action'))
+      })
+    })
+
+  })
+</script>
 @end

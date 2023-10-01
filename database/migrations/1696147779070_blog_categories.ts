@@ -1,18 +1,26 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'states'
+  protected tableName = 'blog_categories'
 
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id').primary()
-      table.string('name', 50).notNullable()
+      table.increments('id')
+
+      table.string('name').unique().notNullable()
+      table.string('slug').unique().notNullable()
+
       table
-        .integer('country_id', 10)
+        .integer('language_id')
         .unsigned()
         .references('id')
-        .inTable('countries')
+        .inTable('languages')
         .onDelete('SET NULL')
+
+      table.string('meta_title')
+      table.string('meta_keywords')
+      table.string('meta_desc')
+
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */

@@ -11,9 +11,7 @@ Route.group(() => {
 
     Route.resource('admin-users', 'AdminUsersController')
     Route.get('admin-users/ban/:id', 'AdminUsersController.banUser')
-    Route.get('admin-users/change-role/:id', 'AdminUsersController.changeRole').as(
-      'admin_users.changerole'
-    )
+    Route.get('admin-users/change-role/:id', 'AdminUsersController.changeRole')
     Route.resource('roles', 'RolesController')
     Route.get('permissions', 'PermissiosnController.index').as('permissions.index')
   }).middleware('auth:webAdmin')

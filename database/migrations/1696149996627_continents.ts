@@ -1,18 +1,13 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'states'
+  protected tableName = 'continents'
 
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id').primary()
-      table.string('name', 50).notNullable()
-      table
-        .integer('country_id', 10)
-        .unsigned()
-        .references('id')
-        .inTable('countries')
-        .onDelete('SET NULL')
+      table.increments('id')
+      table.string('name').notNullable()
+
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */

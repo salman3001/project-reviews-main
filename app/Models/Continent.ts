@@ -1,19 +1,16 @@
 import { DateTime } from 'luxon'
 import { BaseModel, HasOne, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
-import State from './State'
+import Country from './Country'
 
-export default class Country extends BaseModel {
+export default class Continent extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
   @column()
   public name: string
 
-  @column()
-  public continentId: number
-
-  @hasOne(() => State)
-  public state: HasOne<typeof State>
+  @hasOne(() => Country)
+  public state: HasOne<typeof Country>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

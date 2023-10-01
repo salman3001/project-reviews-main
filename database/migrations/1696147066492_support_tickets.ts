@@ -1,18 +1,21 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'states'
+  protected tableName = 'support_tickets'
 
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id').primary()
-      table.string('name', 50).notNullable()
+      table.increments('id')
+      table.string('subject').notNullable()
       table
-        .integer('country_id', 10)
+        .string('user_id')
         .unsigned()
+        .notNullable()
         .references('id')
-        .inTable('countries')
+        .inTable('users')
         .onDelete('SET NULL')
+      table.enum('status', ['Open', 'Responded', 'Closed']).defaultTo('Open')
+
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */

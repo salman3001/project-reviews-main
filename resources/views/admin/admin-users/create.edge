@@ -115,12 +115,13 @@
           </div>
           <div class="form-control w-full max-w-2xl">
             <label class="">
-              <span class="label-text">City</span>
+              <span class="label-text">Country</span>
             </label>
-            <select class="select select-bordered " name="cityId">
-              <option disabled selected>Select City</option>
-              @each(city in cities)
-              <option value="{{city.id}}" {{fl?.cityId && fl?.cityId==city.id && "selected" }}>{{city.name}}
+            <select class="select select-bordered " name="address[countryId]" id="country">
+              <option disabled selected>Select Country</option>
+              @each(country in countries)
+              <option value="{{country.id}}" {{fl?.countryId && fl?.countryId==country.id && "selected" }}>
+                {{country.name}}
               </option>
               @endeach
             </select>
@@ -129,7 +130,7 @@
             <label class="">
               <span class="label-text">State</span>
             </label>
-            <select class="select select-bordered " name="stateId">
+            <select class="select select-bordered " name="address[stateId]" id="state" disabled>
               <option disabled selected>Select State</option>
               @each(state in States)
               <option value="{{state.id}}" {{fl?.stateId && fl?.stateId==state.id && "selected" }}>{{state.name}}
@@ -139,17 +140,30 @@
           </div>
           <div class="form-control w-full max-w-2xl">
             <label class="">
-              <span class="label-text">Country</span>
+              <span class="label-text">City</span>
             </label>
-            <select class="select select-bordered " name="countryId">
-              <option disabled selected>Select Country</option>
-              @each(country in countries)
-              <option value="{{country.id}}" {{fl?.countryId && fl?.countryId==country.id && "selected" }}>
-                {{country.name}}
+            <select class="select select-bordered " name="address[cityId]" id="city" disabled>
+              <option disabled selected>Select City</option>
+              @each(city in cities)
+              <option value="{{city.id}}" {{fl?.cityId && fl?.cityId==city.id && "selected" }}>{{city.name}}
               </option>
               @endeach
             </select>
           </div>
+          <div class="form-control w-full max-w-2xl">
+            <label class="">
+              <span class="label-text">Street</span>
+            </label>
+            <select class="select select-bordered " name="address[streetId]" id="street" disabled>
+              <option disabled selected>Select Street</option>
+              @each(street in streets)
+              <option value="{{street.id}}" {{fl?.streetId && fl?.streetId==street.id && "selected" }}>{{street.name}}
+              </option>
+              @endeach
+            </select>
+          </div>
+
+
           <div class="form-control w-full max-w-2xl">
             <label class="">
               <span class="label-text">Zipcode</span>
@@ -235,9 +249,64 @@
 </section>
 <script>
   $(document).ready(()=>{
-    $("#click").on("click",()=>{
-      alert("heelo")
+    //get states
+    $("#country").on('change',function(){
+
+      $('#state').attr('disabled',true)
+      $('#city').attr('disabled',true)
+      $('#street').attr('disabled',true)
+
+      $.ajax({
+        url:"{{route('AddressesController.getStates')}}"+"?countryId="+$(this).val(),
+        success:(data)=>{
+          $('#state').attr('disabled',false)
+          $('#state option').remove()
+          $('#state').append($("<option>",{value:"",text:"Select State",selected:true}))
+          data.states.forEach(state => {
+            $('#state').append($("<option>",{value:state.id,text:state.name}))
+          });
+        }
+      })
     })
+
+        //get cities
+      $("#state").on('change',function(){
+
+      $('#city').attr('disabled',true)
+      $('#street').attr('disabled',true)
+
+      $.ajax({
+        url:"{{route('AddressesController.getCities')}}"+"?stateId="+$(this).val(),
+        success:(data)=>{
+          console.log(data);
+          $('#city').attr('disabled',false)
+          $('#city option').remove()
+          $('#city').append($("<option>",{value:"",text:"Select City",selected:true}))
+          data.cities.forEach(state => {
+            $('#city').append($("<option>",{value:state.id,text:state.name}))
+          });
+        }
+      })
+    })
+
+//get cities
+$("#city").on('change',function(){
+  $('#street').attr('disabled',true)
+
+  $.ajax({
+   url:"{{route('AddressesController.getStreets')}}"+"?cityId="+$(this).val(),
+    success:(data)=>{
+    console.log(data);
+    $('#street').attr('disabled',false)
+    $('#street option').remove()
+    $('#street').append($("<option>",{value:"",text:"Select Street",selected:true}))
+    data.streets.forEach(state => {
+      $('#street').append($("<option>",{value:state.id,text:state.name}))
+    });
+  }
+})
+})
+
   })
 </script>
 @end

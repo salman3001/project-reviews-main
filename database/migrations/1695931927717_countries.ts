@@ -8,12 +8,11 @@ export default class extends BaseSchema {
       table.increments('id').primary()
       table.string('name', 50).notNullable()
       table
-        .integer('address_is', 10)
+        .integer('continent_id', 10)
         .unsigned()
         .references('id')
-        .inTable('addresses')
+        .inTable('continents')
         .onDelete('SET NULL')
-
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */

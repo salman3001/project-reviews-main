@@ -27,3 +27,6 @@ Route.get('/', async ({ view }) => {
 }).as('home')
 
 Route.get('partials/:name', 'PartialsController.getPartial')
+Route.get('location/states', 'AddressesController.getStates')
+Route.get('location/cities', 'AddressesController.getCities')
+Route.get('location/streets', 'AddressesController.getStreets')

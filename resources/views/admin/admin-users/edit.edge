@@ -18,7 +18,6 @@
       <p class="text-base-400 text-sm">Add user details</p>
     </div>
   </div>
-  {{inspect('errors')}}
   <form action=" {{route('admin_users.update', {id:user.id}, { qs: { _method: 'PUT' } }) }}" method="post" class="mt-4"
     enctype="multipart/form-data">
     {{ csrfField() }}
@@ -122,10 +121,11 @@
             <label class="">
               <span class="label-text">Country</span>
             </label>
-            <select class="select select-bordered " name="address[countryId]">
+            <select class="select select-bordered " name="address[countryId]" disabled>
               <option disabled selected value="">Select Country</option>
               @each(country in countries)
-              <option value="{{user?.address?.country && user?.address?.country.id==country.id && " selected" }}">
+              <option value="{{user?.address?.country && user?.address?.country.id==country.id && " selected" }}"
+                disabled>
                 {{country.name}}
               </option>
               @endeach
@@ -135,7 +135,7 @@
             <label class="">
               <span class="label-text">State</span>
             </label>
-            <select class="select select-bordered " name="address[stateId]">
+            <select class="select select-bordered " name="address[stateId]" disabled>
               <option disabled selected value="">Select State</option>
               {{-- @each(state in States)
               <option value="{{user?.address?.state && user?.address?.state.id==state.id && " selected" }}">
@@ -148,7 +148,7 @@
             <label class="">
               <span class="label-text">City</span>
             </label>
-            <select class="select select-bordered " name="address[cityId]">
+            <select class="select select-bordered " name="address[cityId]" disabled>
               <option disabled selected value="">Select City</option>
               {{-- @each(city in cities)
               <option value="{{user?.address?.city && user?.address?.city.id==city.id && " selected" }}">
@@ -161,7 +161,7 @@
             <label class="">
               <span class="label-text">Street</span>
             </label>
-            <select class="select select-bordered " name="address[streetId]">
+            <select class="select select-bordered " name="address[streetId]" disabled>
               <option disabled selected value="">Select Street</option>
               {{-- @each(street in cities)
               <option value="{{user?.address?.city && user?.address?.city.id==city.id && " selected" }}">
@@ -178,7 +178,7 @@
             </label>
             <input type="text" placeholder="Type here"
               class="input input-bordered w-full  max-w-md {{fl?.errors['address.zip'] && 'input-error'}}"
-              name="address[zip]" value="{{user?.address?.zip??""}}" />
+              name="address[zip]" value="{{user?.address?.zip??""}}" disabled />
             <span class="text-red-500">{{fl?.errors['address.zip'] ?? "" }}</span>
           </div>
         </div>

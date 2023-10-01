@@ -88,19 +88,16 @@ export default class AdminUsersController {
     await user?.load((loader) => {
       loader.load('address').load('avatar').load('social')
     })
-    const cities = []
-    const states = []
-    const countries = []
+
     const roles = await Role.all()
 
-    return view.render('admin/admin-users/edit', { user, cities, states, countries, roles })
+    return view.render('admin/admin-users/edit', { user, roles })
   }
 
   public async update({ request, response, session, params }: HttpContextContract) {
     const id = Number(params.id)
     const payload = await request.validate(AdminUserUpdateValidator)
     let user = await AdminUser.query().where('id', id).preload('address').first()
-    console.log(payload)
 
     if (user) {
       user.merge({ ...payload.user })
@@ -154,39 +151,39 @@ export default class AdminUsersController {
   }
 
   public async destroy({ params, response, session }: HttpContextContract) {
-    console.log('Ran')
+    const user = await AdminUser.find(+params.id)
+    await user?.load('avatar')
 
-    const deletedUser = await prisma.adminUser.delete({
-      where: { id: Number(params.id) },
-      include: { avatar: true },
-    })
-
-    if (deletedUser?.avatar) {
-      await Drive.delete(deletedUser.avatar.url)
-      await prisma.image.delete({ where: { id: deletedUser.avatar.id } })
+    if (user?.avatar) {
+      await Drive.delete(user.avatar.url)
+      await user.avatar.delete()
     }
+
+    await user?.delete()
 
     session.flash('message', { type: 'success', title: 'User deleted successfully' })
     return response.redirect('back')
   }
 
   public async banUser({ params, session, response }: HttpContextContract) {
-    await prisma.adminUser.update({
-      where: { id: Number(params.id) },
-      data: {
-        isActive: false,
-      },
-    })
-    session.flash('message', { type: 'success', title: 'User Banned' })
-    return response.redirect('back')
+    const user = await AdminUser.find(+params.id)
+    if (user) {
+      user.isActive = false
+      await user.save()
+      session.flash('message', { type: 'success', title: 'User Banned' })
+      return response.redirect('back')
+    } else {
+      session.flash('message', { type: 'error', title: 'User Not Found' })
+      return response.redirect('back')
+    }
   }
 
   public async changeRole({ params, session, response, request }: HttpContextContract) {
     const roleId = request.input('roleId')
-    await prisma.adminUser.update({
-      where: { id: Number(params.id) },
-      data: { roleId: Number(roleId) },
-    })
+    const role = await Role.find(+roleId)
+    const user = await AdminUser.find(+params.id)
+    await user?.related('role').dissociate()
+    if (role) await user?.related('role').associate(role)
     session.flash('message', { type: 'success', title: 'Role Updated' })
     return response.redirect('back')
   }
