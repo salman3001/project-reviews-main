@@ -5,16 +5,11 @@ export default class extends BaseSchema {
 
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id')
+      table.increments('id').primary()
       table.string('subject').notNullable()
-      table
-        .string('user_id')
-        .unsigned()
-        .notNullable()
-        .references('id')
-        .inTable('users')
-        .onDelete('SET NULL')
-      table.enum('status', ['Open', 'Responded', 'Closed']).defaultTo('Open')
+      table.integer('user_id').unsigned().references('id').inTable('users').onDelete('SET NULL')
+
+      table.enum('status', ['Open', 'Responded', 'Closed']).defaultTo('Open').notNullable()
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
@@ -25,6 +20,7 @@ export default class extends BaseSchema {
   }
 
   public async down() {
+    this.schema.raw('DROP TYPE IF EXISTS "support_ticket_status"')
     this.schema.dropTable(this.tableName)
   }
 }

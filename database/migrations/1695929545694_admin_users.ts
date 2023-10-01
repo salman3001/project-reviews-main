@@ -11,7 +11,7 @@ export default class extends BaseSchema {
       table.string('remember_me_token').nullable()
       table.string('first_name', 50)
       table.string('last_name')
-      table.integer('phone', 12).unsigned()
+      table.string('phone', 15)
       table.string('desc')
       table.boolean('is_active').defaultTo(false).notNullable()
       table.integer('role_id').unsigned().references('roles.id').onDelete('SET NULL')

@@ -1,6 +1,4 @@
-import { prisma } from '@ioc:Adonis/Addons/Prisma'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Drive from '@ioc:Adonis/Core/Drive'
 import AdminUser from 'App/Models/AdminUser'
 import Role from 'App/Models/Role'
@@ -18,7 +16,7 @@ export default class AdminUsersController {
     const query = AdminUser.query()
 
     if (search) {
-      query.whereLike('firstName', `%${search}%`).orWhereLike('lastName', `%${search}%`)
+      query.whereLike('firstName', '%' + search + '%').orWhereLike('lastName', '%' + search + '%')
     }
 
     if (roleId) {
@@ -32,7 +30,7 @@ export default class AdminUsersController {
     }
 
     await query.preload('avatar').preload('role')
-    const users = await query.orderBy(orderBy || 'first_name').paginate(page || 1, 2)
+    const users = await query.orderBy(orderBy || 'first_name').paginate(page || 1, 10)
     users.baseUrl('/admin/admin-users')
     const roles = await Role.all()
 
