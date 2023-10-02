@@ -8,8 +8,10 @@ export default class KnowledgeBaseContent extends BaseModel {
 
   @column()
   public title: string
+
   @column()
   public slug: string
+
   @column()
   public knowledgeBaseCategoryId: number
 

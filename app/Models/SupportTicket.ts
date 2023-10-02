@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
+import { TicketStatus } from 'App/Helpers/enums'
 
 export default class SupportTicket extends BaseModel {
   @column({ isPrimary: true })
@@ -16,7 +17,7 @@ export default class SupportTicket extends BaseModel {
   public user: BelongsTo<typeof User>
 
   @column()
-  public status: 'Open' | 'Closed' | 'Responded'
+  public status: TicketStatus
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

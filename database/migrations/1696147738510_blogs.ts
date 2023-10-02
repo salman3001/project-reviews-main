@@ -9,12 +9,6 @@ export default class extends BaseSchema {
       table.string('title').unique().notNullable()
       table.string('slug').unique().notNullable()
       table
-        .integer('category_id')
-        .unsigned()
-        .references('id')
-        .inTable('blog_categories')
-        .onDelete('SET NULL')
-      table
         .integer('language_id')
         .unsigned()
         .references('id')

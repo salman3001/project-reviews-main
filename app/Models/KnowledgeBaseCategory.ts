@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, HasMany, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import KnowledgeBaseContent from './KnowledgeBaseContent'
 
 export default class KnowledgeBaseCategory extends BaseModel {
   @column({ isPrimary: true })
@@ -15,13 +16,16 @@ export default class KnowledgeBaseCategory extends BaseModel {
   public slug: string
 
   @column()
-  public meta_title: string
+  public metaTitle: string
 
   @column()
-  public meta_desc: string
+  public metaDesc: string
 
   @column()
-  public meta_keywords: string
+  public metaKeywords: string
+
+  @hasMany(() => KnowledgeBaseContent)
+  public contents: HasMany<typeof KnowledgeBaseContent>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

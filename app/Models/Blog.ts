@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, ManyToMany, column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
 import BlogCategory from './BlogCategory'
 
 export default class Blog extends BaseModel {
@@ -15,8 +15,10 @@ export default class Blog extends BaseModel {
   @column()
   public categoryId: string
 
-  @belongsTo(() => BlogCategory)
-  public category: BelongsTo<typeof BlogCategory>
+  @manyToMany(() => BlogCategory, {
+    pivotTable: 'blog_categories_pivot',
+  })
+  public category: ManyToMany<typeof BlogCategory>
 
   @column()
   public languageId: string

@@ -1,4 +1,5 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
+import { TicketStatus } from 'App/Helpers/enums'
 
 export default class extends BaseSchema {
   protected tableName = 'support_tickets'
@@ -9,7 +10,7 @@ export default class extends BaseSchema {
       table.string('subject').notNullable()
       table.integer('user_id').unsigned().references('id').inTable('users').onDelete('SET NULL')
 
-      table.enum('status', ['Open', 'Responded', 'Closed']).defaultTo('Open').notNullable()
+      table.enum('status', Object.values(TicketStatus)).defaultTo('Open').notNullable()
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
